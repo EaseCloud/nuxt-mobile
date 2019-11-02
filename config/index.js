@@ -1,8 +1,8 @@
-import base_config from './base'
+import default_config from './default'
 import custom_config from '~/config'
 
 export default {
-  ...base_config,
+  ...default_config,
   ...custom_config
 }
 

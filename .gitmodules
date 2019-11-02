@@ -1,0 +1,3 @@
+[submodule "assets/less-template"]
+	path = assets/less-template
+	url = https://github.com/easecloud/less-template
