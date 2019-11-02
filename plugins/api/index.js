@@ -3,7 +3,6 @@
  * 通过 vm.api('model') 可以获取到 vue-resource 方式获取到的 REST-resource 对象
  * 提供相同的接口
  */
-import Vue from 'vue'
 import urljoin from 'url-join'
 import template from 'url-template'
 import axios from 'axios'
@@ -131,32 +130,37 @@ function notifyResponseMessage (vm, response) {
   }
 }
 
-Vue.mixin({
-  computed: {
-    // 动态生成实例，使得动态配置 config.axios_options 修改可以动态生效
-    // axios: () => axios.create(config.axios_options)
-    axios () {
-      const vm = this
-      // Axios instance
-      const index = axios.create(config.axios_options)
-      index.interceptors.response.use(response => {
-        notifyResponseMessage(vm, response)
-        return response
-      }, error => {
-        notifyResponseMessage(vm, error.response)
-        return Promise.reject(error)
-      })
-      return index
-    }
-  },
-  methods: {
-    // 从性能角度来看，可以考虑将多次的构造缓存下来，支持重复使用
-    api (model, root = config.api_root) {
-      const vm = this
-      const resource = new RestResource(model || vm.model, root)
-      // 保留 vm 的引用
-      resource.vm = vm
-      return resource
-    }
+export default {
+  install (Vue, options) {
+    Vue.mixin({
+      computed: {
+        // 动态生成实例，使得动态配置 config.axios_options 修改可以动态生效
+        // axios: () => axios.create(config.axios_options)
+        axios () {
+          const vm = this
+          // Axios instance
+          const index = axios.create(config.axios_options)
+          index.interceptors.response.use(response => {
+            notifyResponseMessage(vm, response)
+            return response
+          }, error => {
+            notifyResponseMessage(vm, error.response)
+            return Promise.reject(error)
+          })
+          return index
+        }
+      },
+      methods: {
+        // 从性能角度来看，可以考虑将多次的构造缓存下来，支持重复使用
+        api (model, root = config.api_root) {
+          const vm = this
+          const resource = new RestResource(model || vm.model, root)
+          // 保留 vm 的引用
+          resource.vm = vm
+          return resource
+        }
+      }
+    })
   }
-})
+}
+

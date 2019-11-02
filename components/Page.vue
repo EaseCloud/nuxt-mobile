@@ -12,7 +12,7 @@ export default {
     return {
       notify_items: [{ message: 'fuck\nyou\none\nmore\ntime', delay: 0, closable: true },
         { message: 'fuck', delay: 1000, closable: false },
-        { message: '又长又臭还打死不换行的一段傻逼文字一写到底无怨无悔', delay: 1000, closable: false }]
+        { message: '又长又臭还打死不换行的一段傻逼文字一写到底无怨无悔', delay: 5000, closable: false }]
     }
   }
 }
