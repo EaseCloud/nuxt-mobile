@@ -13,7 +13,7 @@ export default {
       methods: {
         notify (message, delay = 3000, closable = false) {
           const vm = this
-          vm.$store.commit('notifier/addNotify', message, delay, closable)
+          vm.$store.dispatch('notifier/addNotify', message, delay, closable)
         }
       }
     })

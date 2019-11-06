@@ -23,15 +23,6 @@ export default {
     //   type: Boolean,
     //   default: false
     // }
-  },
-  async mounted () {
-    const vm = this
-    if (vm.item.delay) {
-      // console.log('set delay', JSON.parse(JSON.stringify(vm.item)))
-      setTimeout(() => {
-        vm.$emit('dismiss', vm.item)
-      }, vm.item.delay)
-    }
   }
 }
 </script>

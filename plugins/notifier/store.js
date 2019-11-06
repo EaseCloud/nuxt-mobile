@@ -3,9 +3,20 @@ export default {
   state: {
     notify_items: []
   },
+  actions: {
+    async addNotify ({ commit, state, dispatch }, message, delay = 3000, closable = false) {
+      const item = { message, delay, closable }
+      commit('addNotify', item)
+      if (delay) setTimeout(() => commit('dismissNotify', item), delay)
+    },
+    async dismissNotify ({ commit, state }, item) {
+      commit('dismissNotify', item)
+    },
+  },
   mutations: {
-    addNotify (state, message, delay = 3000, closable = false) {
-      state.notify_items.push({ message, delay, closable })
+    addNotify (state, item) {
+      state.notify_items.push(item)
+      return item
     },
     dismissNotify (state, item) {
       const pos = state.notify_items.indexOf(item)
@@ -13,3 +24,4 @@ export default {
     }
   }
 }
+
