@@ -17,16 +17,6 @@ import Notify from './Notify'
 
 export default {
   components: { Notify },
-  props: {
-    notify_items: {
-      type: Array,
-      default: []
-    },
-    dialog_items: {
-      type: Array,
-      default: []
-    },
-  },
   mounted () {
     // const vm = this
     // console.log(vm.notify_items)
