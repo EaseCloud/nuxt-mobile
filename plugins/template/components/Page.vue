@@ -13,7 +13,7 @@
         </div>
       </div>
     </slot>
-    <div class="page-body" :class="{'with-navbar': !!navbar}">
+    <div class="page-body" :class="{'with-navbar': !!navbar, 'with-actionbar': !!actionbar}">
       <slot></slot>
     </div>
     <slot name="actionbar">
@@ -81,6 +81,7 @@ export default {
 .page {
   .fill-absolute();
   .nav-bar {
+    z-index: 1;
     .fixed-top();
     height: 88*@px;
     line-height: 88*@px;
@@ -111,6 +112,7 @@ export default {
     }
   }
   .action-bar {
+    z-index: 1;
     .fixed-bottom();
     font-size: 32*@px;
     height: 88*@px;

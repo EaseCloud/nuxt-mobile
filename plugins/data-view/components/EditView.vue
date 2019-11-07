@@ -9,6 +9,7 @@
 </template>
 
 <script>
+import defaults from '../defaults'
 import EditViewForm from './EditViewForm.vue'
 
 export default {
@@ -40,9 +41,14 @@ export default {
         label: '删除',
         buttonClass: 'error',
         display: item => Number(vm.$route.params.id) &&
-          (vm.options.can_delete === void 0 || vm.finalizeSync(vm.options.can_delete, item))
+          (vm.options.can_delete === void 0 || vm.finalizeSync(vm.options.can_delete, item)),
+        action: () => vm.remove()
       }]
-    }
+    },
+    hooks () {
+      const vm = this
+      return { ...defaults.hooks, ...(vm.$attrs.hooks || {}) }
+    },
   },
   data () {
     return {
@@ -73,7 +79,7 @@ export default {
         // 如果是创建要跳转页面
         const route = await vm.getModelEditRoute(vm.model, vm.$refs.form.id_)
         // await vm.replacePage(route)
-        vm.$router.push(route)
+        vm.$router.replace(route)
       }
       await vm.refresh()
     },
@@ -84,9 +90,10 @@ export default {
     },
     async remove () {
       const vm = this
-      await vm.$confirm('确认删除？')
+      await vm.confirm('确认删除？')
       await vm.$refs.form.deleteItem()
-      vm.closeCurrentPage()
+      await vm.hooks.action_after_delete.apply(vm, [vm.item])
+      // vm.closeCurrentPage()
     },
     async validate () {
       const vm = this

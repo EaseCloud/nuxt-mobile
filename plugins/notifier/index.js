@@ -11,9 +11,13 @@ export default {
         NotifierRegistry
       },
       methods: {
-        notify (message, delay = 3000, closable = false) {
+        async notify (message, delay = 3000, closable = false) {
           const vm = this
-          vm.$store.dispatch('notifier/addNotify', message, delay, closable)
+          return vm.$store.dispatch('notifier/addNotify', message, delay, closable)
+        },
+        async confirm (message) {
+          // TODO: 暂时苟且，后面优化
+          return window.confirm(message) ? Promise.resolve() : Promise.reject()
         }
       }
     })

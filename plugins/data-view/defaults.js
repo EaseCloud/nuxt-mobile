@@ -34,6 +34,7 @@ export default {
         item
       })
       const itemAfterSave = await vm.hooks.action_save.apply(vm, [data])
+      // console.log(itemAfterSave)
       return itemAfterSave
     },
     async action_delete (item) {
@@ -41,6 +42,10 @@ export default {
       const pk = await vm.finalize(vm.pk, item)
       const id = await vm.evaluate(item, pk)
       await vm.api().delete({ id })
+    },
+    async action_after_delete (item) {
+      const vm = this
+      vm.$router.replace(await vm.config.hooks.action_get_model_list_route(vm.model))
     },
     async action_create () {
       const vm = this
