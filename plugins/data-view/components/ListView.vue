@@ -147,59 +147,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@import "../../../style/defines";
+@import "../../../../assets/styles/defines";
 
-.page-content.list-view {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  right: 10px;
-  bottom: 10px;
-  padding-bottom: 60px;
-  .page-header {
-    .clearfix();
-    .title {
-      .title();
-      display: inline-block;
-      line-height: 32px;
-    }
-    .subtitle {
-      .text();
-      display: inline-block;
-      line-height: 32px;
-      margin-left: 1em;
-    }
-    .controls {
-      float: right;
-    }
-  }
-  .page-footer {
-    position: absolute;
-    text-align: right;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding: 14px 16px;
-    border-top: 1px solid rgb(233, 234, 236);
-    background: white;
-    z-index: 2;
-  }
-  & /deep/ .ivu-card-body {
-    position: absolute;
-    top: 62px;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    padding-bottom: 60px;
-  }
-  .list-view-table {
-    position: absolute;
-    top: 0;
-    bottom: 62px;
-    left: 0;
-    right: 0;
-    padding: 16px;
-    overflow-y: auto;
-  }
-}
 </style>

@@ -2,6 +2,8 @@ import Vue from 'vue'
 
 import mixins from './mixins'
 
+import VueBetterScroll from 'vue2-better-scroll'
+
 import UtilsPlugin from './plugins/utils'
 import ApiPlugin from './plugins/api'
 import TemplatePlugin from './plugins/template'
@@ -10,6 +12,8 @@ import DataViewPlugin from './plugins/data-view'
 
 // https://zh.nuxtjs.org/guide/plugins#同时注入
 export default ({ store }, inject) => {
+  // 引入外部插件
+  Vue.use(VueBetterScroll)
   // Vue 插件式引入：Utils模块
   Vue.use(UtilsPlugin)
   // Vue 插件式引入：Api模块

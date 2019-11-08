@@ -114,15 +114,16 @@ export default {
     return { name: `main_${model}_edit`, params: { id: pk } }
   },
   /**
-   * TODO: 默认情况没有实现
    * ListView 使用：根据接口配置获取数据
    * @returns {Promise<>}
    */
   async action_list_view_load_data () {
     const vm = this
-    return vm.api().get({
-      // page
+    const resp = await vm.api(vm.model).get({}, {
+      page: vm.pager.page,
+      page_size: vm.pager.page_size
     })
+    return resp.data
   },
   /**
    * EditView 使用：根据接口配置获取单个数据

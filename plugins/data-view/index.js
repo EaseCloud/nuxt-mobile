@@ -62,7 +62,7 @@ export default {
        */
       async getModelEditRoute (model, pk) {
         const vm = this
-        return await vm.config.hooks.action_get_model_edit_route.apply(vm, [model, pk])
+        return vm.hooks.get_model_edit_route.apply(vm, [model, pk])
       },
       /**
        * 行级编辑动作
@@ -80,7 +80,8 @@ export default {
        */
       async actionInlineEdit (item) {
         const vm = this
-        return vm.hooks.action_inline_edit.apply(vm, [item])
+        await vm.hooks.action_inline_edit.apply(vm, [item])
+        await vm.reload()
       },
       /**
        * 行级删除动作
