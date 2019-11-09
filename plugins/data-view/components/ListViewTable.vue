@@ -313,8 +313,6 @@ export default {
       const type = field.final.type || 'text'
       const fieldIndex = vm.fields.indexOf(field)
       const value = vm.data[index][`__column${fieldIndex}__`]
-      console.error(field, index, value, fieldIndex)
-      console.log(vm.data[index])
       // CHECKLIST: <data-view-types> <list-view>
       // console.log(`RENDER[${index}]:`, type, value)
       if (type === 'label' || type === 'text') {

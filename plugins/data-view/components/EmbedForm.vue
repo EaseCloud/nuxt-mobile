@@ -161,6 +161,7 @@ export default {
     async setItem (item) {
       const vm = this
       vm.item = item
+      vm.$emit('change', vm.item)
       await vm.render()
       // 无论何种形式初始化（initData 或者 noInit + 外部 setItem）
       // 都从这里确认初始化成功，才触发渲染
@@ -285,6 +286,7 @@ export default {
       if (write) await vm.writeField(field, vm.item)
       await vm.renderField(field)
       vm.$emit('update', field)
+      vm.$emit('change', vm.item)
     },
     async doFieldAction (action, field) {
       const vm = this

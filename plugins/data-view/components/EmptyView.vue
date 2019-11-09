@@ -1,6 +1,9 @@
 <template>
-  <page v-bind="pageOptions">
+  <page v-bind="pageOptions" :context="context">
     <slot></slot>
+    <template slot="actions">
+      <slot name="actions"></slot>
+    </template>
   </page>
 </template>
 
@@ -10,6 +13,10 @@ export default {
   props: {
     title: { type: [String, Function], default: '新的页面' },
     // subtitle: { type: [String, Function], default: '' },
+    /**
+     * 传入 actions 动作函数里面的上下文对象
+     */
+    context: { default: null },
     // 操作按钮
     actions: { type: Array, default: () => [] },
     options: {
@@ -28,9 +35,7 @@ export default {
     pageOptions () {
       const vm = this
       return {
-        navbar: {
-          title: vm.title
-        },
+        navbar: { title: vm.title },
         actionbar: !!vm.actions.length && { actions: vm.actions }
       }
     }

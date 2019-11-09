@@ -8,7 +8,7 @@
         <div class="actions" v-if="navbar.actions">
           <template v-for="action in navbar.actions">
             <fa :icon="action.icon" class="action-item"
-                @click="doAction(action.action)"></fa>
+                @click="doAction(action.action, context)"></fa>
           </template>
         </div>
       </div>
@@ -22,10 +22,11 @@
           <template v-for="action in actionbar.actions">
             <a class="action-item" :class="{[action.buttonClass||'default']: true}"
                v-if="action.display === void 0 ||
-                     typeof(action.display) === 'function' && action.display(this) ||
+                     typeof(action.display) === 'function' && action.display.apply($this, [context]) ||
                      typeof(action.display) !== 'function' && !!action.display"
-               @click="doAction(action.action)">{{action.label}}</a>
+               @click="doAction(action.action, [context])">{{action.label}}</a>
           </template>
+          <slot name="actions"></slot>
         </div>
       </div>
     </slot>
@@ -44,6 +45,10 @@ export default {
     }
   },
   props: {
+    /**
+     * 传入 actions 动作函数里面的上下文对象
+     */
+    context: { default: null },
     /**
      * 顶部标题栏
      * 属性：

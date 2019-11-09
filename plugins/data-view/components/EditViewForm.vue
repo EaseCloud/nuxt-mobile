@@ -3,6 +3,7 @@
   <embed-form :fields="fields"
               :noInit="!!id"
               @update="$emit('update', $event)"
+              @change="$emit('change',$event)"
               ref="form"></embed-form>
 </template>
 
@@ -69,6 +70,10 @@
         if (vm.id_) await vm.loadItem()
         // 首次加载进来是 false，只要跑过一次 reload 就变成 true
         vm.initialized = true
+      },
+      getItem() {
+        const vm = this
+        return vm.$refs.form && vm.$refs.form.item
       },
       // async setField (key, value) {
       //   const vm = this

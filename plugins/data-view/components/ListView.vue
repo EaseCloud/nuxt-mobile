@@ -1,52 +1,49 @@
 <template>
-  <card class="page-content list-view">
-    <div slot="title" class="page-header">
-      <h3 class="title">{{title}}</h3>
-      <h4 class="subtitle">{{subtitle}}</h4>
-      <div class="controls">
-        <template v-for="(action, i) in listActions">
-          <i-button :key="i"
-                    v-if=" action.display === void 0 ||
-                          typeof(action.display) === 'function' && action.display(this) ||
-                          typeof(action.display) !== 'function' && !!action.display"
-                    :type="action.buttonType"
-                    @click="doAction(action.action)">{{action.label}}
-          </i-button>
-          <i :key="'_'+i"><!--避免按钮之间粘在一起--></i>
-        </template>
-        <i-button v-if="options.can_create===void 0 || options.can_create"
-                  @click="redirectCreate" type="success">新建
-        </i-button>
-        <i-button v-if="options.can_refresh===void 0 || options.can_refresh"
-                  @click="refresh">刷新
-        </i-button>
-        <i-button v-if="options.can_close===void 0 || options.can_close"
-                  @click="closeCurrentPage">关闭
-        </i-button>
-      </div>
-    </div>
-    <!-- TODO: 从内部 emit 出来的 page_to 同样要在 url 上处理 -->
-    <list-view-table v-bind="listViewOptions"
-                     @loaded="onLoaded"
-                     @query="onQuery"
-                     @select="$emit('select', $event)"
-                     @page_to="pageTo"
-                     @page_size_to="pageSizeTo"
-                     ref="table">
-      <slot name="footer" slot="footer"></slot>
-    </list-view-table>
-    <div class="page-footer" v-if="listViewOptions.showPager&&$refs.table&&$refs.table.pager">
-      <page ref="pager"
-            :total="$refs.table.pager.count"
-            :current="$refs.table.pager.page"
-            :page-size-opts="pageSizeOpts"
-            show-sizer
-            show-total
-            :page-size="Number(listViewOptions.pageSize) || 10"
-            @on-change="pageTo(Number($event))"
-            @on-page-size-change="pageSizeTo(Number($event))"></page>
-    </div>
-  </card>
+  <page v-bind="pageOptions">
+    <list-view-table v-bind="listViewOptions"></list-view-table>
+  </page>
+  <!--<div class="controls">-->
+  <!--<template v-for="(action, i) in listActions">-->
+  <!--<i-button :key="i"-->
+  <!--v-if=" action.display === void 0 ||-->
+  <!--typeof(action.display) === 'function' && action.display(this) ||-->
+  <!--typeof(action.display) !== 'function' && !!action.display"-->
+  <!--:type="action.buttonType"-->
+  <!--@click="doAction(action.action)">{{action.label}}-->
+  <!--</i-button>-->
+  <!--<i :key="'_'+i">&lt;!&ndash;避免按钮之间粘在一起&ndash;&gt;</i>-->
+  <!--</template>-->
+  <!--<i-button v-if="options.can_create===void 0 || options.can_create"-->
+  <!--@click="redirectCreate" type="success">新建-->
+  <!--</i-button>-->
+  <!--<i-button v-if="options.can_refresh===void 0 || options.can_refresh"-->
+  <!--@click="refresh">刷新-->
+  <!--</i-button>-->
+  <!--<i-button v-if="options.can_close===void 0 || options.can_close"-->
+  <!--@click="closeCurrentPage">关闭-->
+  <!--</i-button>-->
+  <!--</div>-->
+  <!--&lt;!&ndash; TODO: 从内部 emit 出来的 page_to 同样要在 url 上处理 &ndash;&gt;-->
+  <!--<list-view-table v-bind="listViewOptions"-->
+  <!--@loaded="onLoaded"-->
+  <!--@query="onQuery"-->
+  <!--@select="$emit('select', $event)"-->
+  <!--@page_to="pageTo"-->
+  <!--@page_size_to="pageSizeTo"-->
+  <!--ref="table">-->
+  <!--<slot name="footer" slot="footer"></slot>-->
+  <!--</list-view-table>-->
+  <!--<div class="page-footer" v-if="listViewOptions.showPager&&$refs.table&&$refs.table.pager">-->
+  <!--<page ref="pager"-->
+  <!--:total="$refs.table.pager.count"-->
+  <!--:current="$refs.table.pager.page"-->
+  <!--:page-size-opts="pageSizeOpts"-->
+  <!--show-sizer-->
+  <!--show-total-->
+  <!--:page-size="Number(listViewOptions.pageSize) || 10"-->
+  <!--@on-change="pageTo(Number($event))"-->
+  <!--@on-page-size-change="pageSizeTo(Number($event))"></page>-->
+  <!--</div>-->
 </template>
 
 <script>
@@ -57,16 +54,32 @@ export default {
   name: 'ListView',
   props: ListViewTable.props,
   computed: {
+    pageOptions () {
+      const vm = this
+      return {
+        navbar: {
+          title: vm.title,
+          actions: [{
+            icon: 'plus',
+            async action () {
+              vm.$router.push(await vm.getModelEditRoute(vm.model, 0))
+            }
+          }]
+          // },
+          // actionbar: {
+        }
+      }
+    },
     listViewOptions () {
       const vm = this
       const initQuery = { ...vm.$route.query }
       delete initQuery.page
       delete initQuery.page_size
       return {
-        showPager: true,
+        // showPager: true,
         ...vm.$attrs,
         ...vm.$props,
-        page: Number(vm.$route.query.page) || vm.$props.page,
+        // page: Number(vm.$route.query.page) || vm.$props.page,
         pageSize: Number(vm.$route.query.page_size) || vm.$props.pageSize,
         initQuery
       }

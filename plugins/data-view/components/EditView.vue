@@ -1,10 +1,22 @@
 <template>
+  <!-- 为了保证内层能够 update 到只能用这么恶心的办法 -->
   <empty-view :title="title"
-              :actions="extendedActions">
+              :context="getItem()"
+              :actions="actions">
     <edit-view-form v-bind="editViewOptions"
                     @loaded="$emit('loaded', $event)"
                     ref="form">
     </edit-view-form>
+    <template slot="actions">
+      <a class="action-item primary"
+         v-if="options.can_edit === void 0 ||
+               finalizeSync(options.can_edit, getItem())"
+         @click="submit()">保存</a>
+      <a class="action-item danger"
+         v-if="options.can_delete === void 0 ||
+               finalizeSync(options.can_delete, getItem())"
+         @click="remove()">删除</a>
+    </template>
   </empty-view>
 </template>
 
@@ -26,25 +38,11 @@ export default {
         id: Number(vm.$props.id || vm.$route.params.id)
       }
     },
-    item () {
-      const vm = this
-      return vm.$refs.form.item
-    },
-    extendedActions () {
-      const vm = this
-      return [...vm.actions, {
-        label: '保存',
-        buttonClass: 'primary',
-        display: item => vm.options.can_edit === void 0 || vm.finalizeSync(vm.options.can_edit, item),
-        action: () => vm.submit()
-      }, {
-        label: '删除',
-        buttonClass: 'error',
-        display: item => Number(vm.$route.params.id) &&
-          (vm.options.can_delete === void 0 || vm.finalizeSync(vm.options.can_delete, item)),
-        action: () => vm.remove()
-      }]
-    },
+    // item () {
+    //   // TODO: 这个不怎么可靠，没办法触发更新
+    //   const vm = this
+    //   return vm.$refs.form && vm.$refs.form.item
+    // },
     hooks () {
       const vm = this
       return { ...defaults.hooks, ...(vm.$attrs.hooks || {}) }
@@ -57,6 +55,10 @@ export default {
     }
   },
   methods: {
+    getItem() {
+      const vm = this
+      return vm.$refs.form && vm.$refs.form.getItem()
+    },
     async refresh () {
       const vm = this
       const form = await vm.waitFor(vm.$refs, 'form')
