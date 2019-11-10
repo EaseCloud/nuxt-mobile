@@ -18,6 +18,11 @@ export default {
         async confirm (message) {
           // TODO: 暂时苟且，后面优化
           return window.confirm(message) ? Promise.resolve() : Promise.reject()
+        },
+        openDialog (dialog) {
+          const vm = this
+          vm.$store.dispatch('notifier/openDialog', dialog)
+          return dialog
         }
       }
     })

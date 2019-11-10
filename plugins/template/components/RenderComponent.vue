@@ -23,13 +23,13 @@ export default {
   props: {
     render: Function,
     self: Object,
-    args: { default: [] }
+    args: { default: () => [] }
   },
   render (h) {
     const vm = this
     // 兼容传入单个元素的形式
     const args = vm.args instanceof Array ? vm.args : [vm.args]
-    return vm.render.apply(self || vm, [h, ...args])
+    return vm.render && vm.render.apply(self || vm, [h, ...args])
   }
 }
 </script>

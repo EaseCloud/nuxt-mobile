@@ -2,23 +2,28 @@
   <div>
     <!-- dialogs -->
     <div class="dialog-list">
+      <n-dialog v-for="(dialog, i) in $store.state.notifier.dialogs"
+                :key="i" :options="dialog"></n-dialog>
     </div>
     <!-- notifies -->
     <div class="notify-list">
       <div v-for="(notify, i) in $store.state.notifier.notify_items">
-        <notify @dismiss="dismiss" :item="notify"></notify>
+        <n-notify @dismiss="dismiss" :item="notify"></n-notify>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import Notify from './Notify'
+import NNotify from './Notify'
+import NDialog from './Dialog'
+
+import { DialogOptions } from '../models'
 
 export default {
-  components: { Notify },
+  components: { NNotify, NDialog },
   mounted () {
-    // const vm = this
+    const vm = this
     // console.log(vm.notify_items)
     // vm.$store.dispatch('notifier/addNotify', '你好我成了', 3000)
   },

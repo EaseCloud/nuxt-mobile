@@ -22,7 +22,8 @@
           </div>
         </div>
         <div class="item-body">
-          <div class="item-field" v-for="field in fields">
+          <div class="item-field" v-for="field in fields"
+               v-if="field.display===void 0||finalizeSync(field.display,item)">
             <div class="item-field-label">{{field.label}}:</div>
             <div class="item-field-content">
               <render-component :render="renderCell"
@@ -144,12 +145,12 @@ export default {
     rendering: {
       type: Object,
       default: {
-        renderItemTitle: {
+        itemTitle: {
           type: Function,
-          default: h => h('span', { style: { color: 'red' } }, 'rendering.renderItemTitle()')
+          default: h => h('span', { style: { color: 'red' } }, 'rendering.itemTitle()')
         },
-        renderItemSubtitle: { type: Function, default: h => null },
-        renderItemInfo: { type: Function, default: h => null },
+        itemSubtitle: { type: Function, default: h => null },
+        itemInfo: { type: Function, default: h => null },
         // 卡片的左边彩带颜色
         ribbonColor: false
       }
