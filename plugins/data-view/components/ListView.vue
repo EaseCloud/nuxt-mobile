@@ -1,49 +1,18 @@
 <template>
   <page v-bind="pageOptions">
-    <list-view-table v-bind="listViewOptions"></list-view-table>
+    <ul class="tab-list">
+      <!-- tab: {label:<label>,key:<key>,query:{}}
+      注意：tab 的 query 可能要设置对应的清除参数 {status:null}
+      才能清除其他 tab 例如 {status:'active'} 的过滤-->
+      <li v-for="tab in tabs"
+          class="tab-item" :class="{active:($route.query.__tab__||'')===(tab.key||'')}">
+        <a @click="tabTo(tab)">{{tab.label}}</a>
+      </li>
+    </ul>
+    <div class="content" :class="{'has-tab': !!tabs}">
+      <list-view-table v-bind="listViewOptions" ref="table"></list-view-table>
+    </div>
   </page>
-  <!--<div class="controls">-->
-  <!--<template v-for="(action, i) in listActions">-->
-  <!--<i-button :key="i"-->
-  <!--v-if=" action.display === void 0 ||-->
-  <!--typeof(action.display) === 'function' && action.display(this) ||-->
-  <!--typeof(action.display) !== 'function' && !!action.display"-->
-  <!--:type="action.buttonType"-->
-  <!--@click="doAction(action.action)">{{action.label}}-->
-  <!--</i-button>-->
-  <!--<i :key="'_'+i">&lt;!&ndash;避免按钮之间粘在一起&ndash;&gt;</i>-->
-  <!--</template>-->
-  <!--<i-button v-if="options.can_create===void 0 || options.can_create"-->
-  <!--@click="redirectCreate" type="success">新建-->
-  <!--</i-button>-->
-  <!--<i-button v-if="options.can_refresh===void 0 || options.can_refresh"-->
-  <!--@click="refresh">刷新-->
-  <!--</i-button>-->
-  <!--<i-button v-if="options.can_close===void 0 || options.can_close"-->
-  <!--@click="closeCurrentPage">关闭-->
-  <!--</i-button>-->
-  <!--</div>-->
-  <!--&lt;!&ndash; TODO: 从内部 emit 出来的 page_to 同样要在 url 上处理 &ndash;&gt;-->
-  <!--<list-view-table v-bind="listViewOptions"-->
-  <!--@loaded="onLoaded"-->
-  <!--@query="onQuery"-->
-  <!--@select="$emit('select', $event)"-->
-  <!--@page_to="pageTo"-->
-  <!--@page_size_to="pageSizeTo"-->
-  <!--ref="table">-->
-  <!--<slot name="footer" slot="footer"></slot>-->
-  <!--</list-view-table>-->
-  <!--<div class="page-footer" v-if="listViewOptions.showPager&&$refs.table&&$refs.table.pager">-->
-  <!--<page ref="pager"-->
-  <!--:total="$refs.table.pager.count"-->
-  <!--:current="$refs.table.pager.page"-->
-  <!--:page-size-opts="pageSizeOpts"-->
-  <!--show-sizer-->
-  <!--show-total-->
-  <!--:page-size="Number(listViewOptions.pageSize) || 10"-->
-  <!--@on-change="pageTo(Number($event))"-->
-  <!--@on-page-size-change="pageSizeTo(Number($event))"></page>-->
-  <!--</div>-->
 </template>
 
 <script>
@@ -52,11 +21,16 @@ import ListViewTable from './ListViewTable.vue'
 
 export default {
   name: 'ListView',
-  props: ListViewTable.props,
+  props: {
+    ...ListViewTable.props,
+    tabs: {
+      type: Array
+    }
+  },
   computed: {
     pageOptions () {
       const vm = this
-      return {
+      const data = {
         navbar: {
           title: vm.title,
           actions: [{
@@ -65,23 +39,19 @@ export default {
               vm.$router.push(await vm.getModelEditRoute(vm.model, 0))
             }
           }]
-          // },
-          // actionbar: {
         }
       }
+      return data
     },
     listViewOptions () {
       const vm = this
-      const initQuery = { ...vm.$route.query }
-      delete initQuery.page
-      delete initQuery.page_size
       return {
         // showPager: true,
         ...vm.$attrs,
         ...vm.$props,
         // page: Number(vm.$route.query.page) || vm.$props.page,
         pageSize: Number(vm.$route.query.page_size) || vm.$props.pageSize,
-        initQuery
+        initQuery: vm.filterQuery({ ...vm.$route.query })
       }
     },
     hooks () {
@@ -119,6 +89,33 @@ export default {
       })
       vm.$router.replace({ query })
     },
+    tabTo (tab) {
+      const vm = this
+      const query = { ...vm.$router.query }
+      if (!tab.key) delete query.__tab__
+      else query.__tab__ = tab.key
+      vm.$router.replace({ query })
+    },
+    filterQuery (query) {
+      const vm = this
+      // 计算 tab 获得的 query
+      if (vm.tabs) {
+        let tab = null
+        vm.tabs.some(t => {
+          const match = (t.key || '') === (vm.$route.query.__tab__ || '')
+          if (match) {
+            tab = t
+            return true
+          }
+        })
+        if (tab) Object.assign(query, tab.query || {})
+      }
+      // 排除保留关键词
+      delete query.__tab__
+      delete query.page
+      delete query.page_size
+      return query
+    },
     async pageTo (page) {
       const vm = this
       // 需要的时候才跳转，跳转后交由 $watch.$route 接管
@@ -149,10 +146,7 @@ export default {
           $table.pageTo(Number(routeTo.query.page))
         }
         // 强制变更查询条件
-        const query = { ...vm.$route.query }
-        delete query.page
-        delete query.page_size
-        $table.doQuery(query)
+        $table.doQuery(vm.filterQuery({ ...vm.$route.query }))
       }
     }
   }
@@ -162,4 +156,33 @@ export default {
 <style lang="less" scoped>
 @import "../../../../assets/styles/defines";
 
+.content {
+  .fill-absolute();
+  overflow: hidden;
+  &.has-tab {
+    top: 88*@px;
+    margin-top: 1px;
+  }
+}
+
+ul.tab-list {
+  line-height: 88*@px;
+  background: white;
+  //border-top: 1px solid @color-border;
+  border-bottom: 1px solid @color-border;
+  text-align: center;
+  overflow-x: scroll;
+  font-size: 32*@px;
+  //margin-top: 20*@px;
+  li.tab-item {
+    display: inline-block;
+    line-height: 54*@px;
+    margin: 0 30*@px;
+    vertical-align: middle;
+    padding: 0 10*@px;
+    &.active {
+      border-bottom: 4*@px solid @color-main;
+    }
+  }
+}
 </style>

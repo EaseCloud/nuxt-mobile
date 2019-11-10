@@ -121,7 +121,8 @@ export default {
     const vm = this
     const resp = await vm.api(vm.model).get({}, {
       page: vm.pager.page,
-      page_size: vm.pager.page_size
+      page_size: vm.pager.page_size,
+      ...vm.query
     })
     return resp.data
   },

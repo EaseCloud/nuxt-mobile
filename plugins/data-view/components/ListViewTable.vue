@@ -9,14 +9,15 @@
                      @pulling-down="reload()"
                      @pulling-up="loadMore()">
     <ul class="view-list" v-if="initialized">
-      <li class="view-item" v-for="(item, i) in items">
+      <li class="view-item" v-for="(item, i) in items"
+          :style="{'border-left-color': rendering.ribbonColor&&finalizeSync(rendering.ribbonColor, item)}">
         <div class="item-header">
           <div class="item-title">
-            <render-component :render="renderItemTitle"
+            <render-component :render="rendering.itemTitle"
                               :self="$this" :args="item"></render-component>
           </div>
           <div class="item-subtitle">
-            <render-component :render="renderItemSubtitle"
+            <render-component :render="rendering.itemSubtitle"
                               :self="$this" :args="item"></render-component>
           </div>
         </div>
@@ -33,7 +34,7 @@
         </div>
         <div class="item-footer">
           <div class="item-info">
-            <render-component :render="renderItemInfo"
+            <render-component :render="rendering.itemInfo"
                               :self="$this" :args="item"></render-component>
           </div>
           <div class="item-actions">
@@ -41,14 +42,18 @@
             <!--class="btn-action">查看-->
             <!--</nuxt-link>-->
             <!-- TODO: 动态的动作重构 -->
-            <a class="btn-action" v-for="action in actions">
+            <a v-for="action in actions"
+               v-if="action.display===void 0||finalizeSync(action.display,item)"
+               class="btn-action" :class="{[action.buttonClass||'default']:true}"
+               @click="action.action.apply($this, [item])">
               {{action.label}}
             </a>
-            <!-- 查看按钮 -->
             <a class="btn-action default"
                v-if="options.can_edit===void 0||finalizeSync(options.can_edit,item)"
-               @click="editItem(item)"
-            >查看</a>
+               @click="editItem(item)">查看</a>
+            <a class="btn-action error"
+               v-if="options.can_delete===void 0||finalizeSync(options.can_delete,item)"
+               @click="deleteItem(item)">删除</a>
             <!--//       if (vm.options.can_delete === void 0 || vm.finalizeSync(vm.options.can_delete, item)) {-->
             <!--//         controls.push(h('Poptip', {-->
             <!--//           props: {-->
@@ -136,12 +141,19 @@ export default {
         // action_column_render_header: null, // 自定义操作列头渲染
       })
     },
-    renderItemTitle: {
-      type: Function,
-      default: h => h('span', { style: { color: 'red' } }, 'renderItemTitle()')
+    rendering: {
+      type: Object,
+      default: {
+        renderItemTitle: {
+          type: Function,
+          default: h => h('span', { style: { color: 'red' } }, 'rendering.renderItemTitle()')
+        },
+        renderItemSubtitle: { type: Function, default: h => null },
+        renderItemInfo: { type: Function, default: h => null },
+        // 卡片的左边彩带颜色
+        ribbonColor: false
+      }
     },
-    renderItemSubtitle: { type: Function, default: h => null },
-    renderItemInfo: { type: Function, default: h => null },
     pageSize: { type: Number, default: 10 },
     page: { type: Number, default: 1 },
     // 当 edit_inline = true 时，根据这个选项进行弹窗编辑
@@ -408,35 +420,28 @@ export default {
       // })
       // 如果全部参数都是一样的情况下，不做刷新
       if (forceReload || updated) {
-        // 修改查询条件的话跳回第一页并加载数据
-        await vm.pageTo(1, true)
-        // 所有 FilteringHeader 需要刷新渲染（Ugly implementation）
-        if (reloadHeader) {
-          vm.initialized = false
-          vm.$nextTick(() => {
-            vm.initialized = true
-          })
-        }
+        // 修改查询条件的话刷新全部数据
+        await vm.reload()
         // 通知父组件
         vm.$emit('query', query)
       }
     },
-    async pageTo (page, forceReload = false) {
-      const vm = this
-      if (forceReload || Number(vm.pager.page) !== Number(page)) {
-        vm.pager.page = page
-        await vm.reload()
-        vm.$emit('page_to', page)
-      }
-    },
-    async pageSizeTo (pageSize, forceReload = false) {
-      const vm = this
-      if (forceReload || Number(vm.pager.pageSize) !== Number(pageSize)) {
-        vm.pager.pageSize = pageSize
-        await vm.reload()
-        vm.$emit('page_size_to', pageSize)
-      }
-    },
+    // async pageTo (page, forceReload = false) {
+    //   const vm = this
+    //   if (forceReload || Number(vm.pager.page) !== Number(page)) {
+    //     vm.pager.page = page
+    //     await vm.reload()
+    //     vm.$emit('page_to', page)
+    //   }
+    // },
+    // async pageSizeTo (pageSize, forceReload = false) {
+    //   const vm = this
+    //   if (forceReload || Number(vm.pager.pageSize) !== Number(pageSize)) {
+    //     vm.pager.pageSize = pageSize
+    //     await vm.reload()
+    //     vm.$emit('page_size_to', pageSize)
+    //   }
+    // },
     /**
      * 初始化所有的行列配置以适配 iView Table 组件的输入格式
      * @returns {Promise<void>}
@@ -631,6 +636,14 @@ export default {
     async editItem (item) {
       const vm = this
       await (vm.options.edit_inline ? vm.actionInlineEdit(item) : vm.actionEdit(item))
+    },
+    async deleteItem (item) {
+      const vm = this
+      await vm.confirm('确认删除这个对象？')
+      await vm.actionDelete(item)
+      const pos = vm.items.indexOf(item)
+      // 删除的话不刷新，只移除一个元素，免得打断用户体验
+      if (pos > 1) vm.items.splice(pos, 1)
     }
   },
   mounted () {
@@ -701,11 +714,36 @@ ul.view-list {
           display: inline-block;
           font-size: 26*@px;
           line-height: 44*@px;
-          background: @color-info-background;
-          color: white;
+          border: 1px solid @color-border;
+          color: @color-text;
           .rounded-corners(5*@px);
           padding: 0 20*@px;
-          margin-left: 20*@px;
+          margin-left: 10*@px;
+          &.primary {
+            background: @color-primary-background;
+            border-color: @color-primary-background;
+            color: white;
+          }
+          &.info {
+            background: @color-info-background;
+            border-color: @color-info-background;
+            color: white;
+          }
+          &.warning {
+            background: @color-warning-background;
+            border-color: @color-warning-background;
+            color: white;
+          }
+          &.success {
+            background: @color-success-background;
+            border-color: @color-success-background;
+            color: white;
+          }
+          &.error {
+            background: @color-error-background;
+            border-color: @color-error-background;
+            color: white;
+          }
         }
       }
     }
