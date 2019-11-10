@@ -136,7 +136,6 @@ export default {
                 label: '选择',
                 action (item) {
                   vm.$store.dispatch('notifier/closeDialog', dialog)
-                  console.log(item)
                   resolve(item)
                 }
               }]
@@ -151,11 +150,11 @@ export default {
               },
               render (h) {
                 el = h('div', {
-                  // style: {
-                  //   height: '100vw',
-                  //   position: 'relative',
-                  //   overflow: 'hidden'
-                  // }
+                  style: {
+                    height: '120vw',
+                    position: 'relative',
+                    overflow: 'hidden'
+                  }
                 }, [h('list-view-table', {
                   props: modalListViewOptions
                 })])

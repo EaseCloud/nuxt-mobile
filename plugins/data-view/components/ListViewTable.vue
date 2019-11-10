@@ -21,7 +21,12 @@
                               :self="$this" :args="item"></render-component>
           </div>
         </div>
-        <div class="item-body">
+        <div class="item-body"
+             :class="{'has-thumbnail': !!rendering.thumbnail}">
+          <div class="thumbnail">
+            <render-component :render="rendering.thumbnail"
+                              :self="$this" :args="item"></render-component>
+          </div>
           <div class="item-field" v-for="field in fields"
                v-if="field.display===void 0||finalizeSync(field.display,item)">
             <div class="item-field-label">{{field.label}}:</div>
@@ -685,6 +690,26 @@ ul.view-list {
     }
     .item-body {
       padding: 20*@px;
+      position: relative;
+      &.has-thumbnail {
+        min-height: 140*@px;
+        .thumbnail {
+          position: absolute;
+          left: 20*@px;
+          top: 20*@px;
+          width: 140*@px;
+          img {
+            border: 1px solid @color-border;
+            box-sizing: border-box;
+            width: 140*@px;
+            height: 140*@px;
+            object-fit: cover;
+          }
+        }
+        .item-field {
+          margin-left: 180*@px;
+        }
+      }
       .item-field {
         font-size: 28*@px;
         line-height: 44*@px;
