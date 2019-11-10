@@ -1,7 +1,7 @@
 export default {
   hooks: {
     // 所有的主线动作都要带钩
-    async get_model_edit_route (model, pk) {
+    get_model_edit_route (model, pk) {
       const vm = this
       return vm.config.hooks.action_get_model_edit_route.apply(vm, [model, pk])
     },

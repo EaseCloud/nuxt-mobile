@@ -50,7 +50,7 @@ export default {
        * @param model
        * @returns {Promise<{name: string, params: {id: *}}>}
        */
-      async getModelListRoute (model) {
+      getModelListRoute (model) {
         const vm = this
         return vm.config.hooks.action_get_model_list_route.apply(vm, [model])
       },
@@ -60,7 +60,7 @@ export default {
        * @param pk
        * @returns {Promise<{name: string, params: {id: *}}>}
        */
-      async getModelEditRoute (model, pk) {
+      getModelEditRoute (model, pk) {
         const vm = this
         return vm.hooks.get_model_edit_route.apply(vm, [model, pk])
       },

@@ -12,6 +12,7 @@ export default {
   name: 'EmptyView',
   props: {
     title: { type: [String, Function], default: '新的页面' },
+    backUrl: { default: '/' },
     // subtitle: { type: [String, Function], default: '' },
     /**
      * 传入 actions 动作函数里面的上下文对象
@@ -35,7 +36,7 @@ export default {
     pageOptions () {
       const vm = this
       return {
-        navbar: { title: vm.title },
+        navbar: { title: vm.title, backUrl: vm.backUrl },
         actionbar: !!vm.actions.length && { actions: vm.actions }
       }
     }

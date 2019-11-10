@@ -11,14 +11,34 @@ export default {
   },
   /**
    * 执行一个 action，主要用在 template 中调用，可以将 this 指针替换成当前 vm
+   * 是否返回 async 结果仅取决于 action 本身是否 async
    * @param action
    * @param args
    * @returns {Promise<*>}
    */
-  async doAction (action, args) {
+  doAction (action, args) {
     const vm = this
     return action.apply(vm, args)
   },
+  // /** TODO: 然而测试过并不存在能够阻塞返回的 async 函数
+  //  * 执行一个 action，主要用在 template 中调用，可以将 this 指针替换成当前 vm
+  //  * action 可以为一个 async 函数，但是如果 async 是阻塞返回结果的，那么这个函数
+  //  * 就能直接同步返回这个返回值，反之无效
+  //  * @param action
+  //  * @param args
+  //  * @returns {Promise<*>}
+  //  */
+  // doActionSync (action, args) {
+  //   const vm = this
+  //   let returnValue
+  //   (async () => {
+  //     console.log('fuck 3', returnValue)
+  //     returnValue = await action.apply(vm, args)
+  //     console.log('fuck 2', returnValue)
+  //   })()
+  //   console.log('fuck 1')
+  //   return returnValue
+  // },
   /**
    * 通过反复执行，直到返回值为真的方式异步获取一个待设置的值
    * 例如：item[key] 正在被写入，其他的程序片段要调取它的值，但是不确定什么时候才写入完毕
@@ -141,4 +161,20 @@ export default {
   finalizeSync (term, ...args) {
     return term instanceof Function ? this.finalizeSync(term.apply(this, args)) : term
   },
+  /**
+   * 执行返回或者（当已经返回到第一个页面的时候）跳转到指定的路由
+   * @param route
+   */
+  backOrRedirect (route) {
+    const vm = this
+    const originRoute = { ...vm.$route }
+    vm.$router.back()
+    vm.$nextTick(() => {
+      // 如果路由并没有发生改变，则认为已经返回失败了
+      if (vm._.isEqual(originRoute, vm.$route)) {
+        // 这个时候，替换页面到指定的路由，默认值为根路径
+        vm.$router.replace(route || '/')
+      }
+    })
+  }
 }

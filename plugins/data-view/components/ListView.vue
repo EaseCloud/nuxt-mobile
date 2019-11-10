@@ -171,9 +171,10 @@ ul.tab-list {
   //border-top: 1px solid @color-border;
   border-bottom: 1px solid @color-border;
   text-align: center;
-  overflow-x: scroll;
   font-size: 32*@px;
   //margin-top: 20*@px;
+  overflow-x: scroll;
+  white-space: nowrap;
   li.tab-item {
     display: inline-block;
     line-height: 54*@px;

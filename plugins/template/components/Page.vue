@@ -3,7 +3,7 @@
     <slot name="navbar">
       <div class="nav-bar" v-if="navbar">
         <fa icon="chevron-left" class="btn-back"
-            @click="navbar.backUrl ? $router.replace(backUrl) : $router.back()"></fa>
+            @click="backOrRedirect(navbar.backUrl)"></fa>
         <div class="title">{{navbar.title}}</div>
         <div class="actions" v-if="navbar.actions">
           <template v-for="action in navbar.actions">

@@ -2,7 +2,8 @@
   <!-- 为了保证内层能够 update 到只能用这么恶心的办法 -->
   <empty-view :title="title"
               :context="getItem()"
-              :actions="actions">
+              :actions="actions"
+              :backUrl="getModelListRoute(model)">
     <edit-view-form v-bind="editViewOptions"
                     @loaded="$emit('loaded', $event)"
                     ref="form">
@@ -55,7 +56,7 @@ export default {
     }
   },
   methods: {
-    getItem() {
+    getItem () {
       const vm = this
       return vm.$refs.form && vm.$refs.form.getItem()
     },
