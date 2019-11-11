@@ -11,7 +11,7 @@ import NotifierPlugin from './plugins/notifier'
 import DataViewPlugin from './plugins/data-view'
 
 // https://zh.nuxtjs.org/guide/plugins#同时注入
-export default ({ store }, inject) => {
+export default ({ store, isClient }, inject) => {
   // 引入外部插件
   Vue.use(VueBetterScroll)
   // Vue 插件式引入：Utils模块
@@ -19,7 +19,7 @@ export default ({ store }, inject) => {
   // Vue 插件式引入：Api模块
   Vue.use(ApiPlugin)
   // Vue 插件式引入，传入 store 用于内部动态 registerModule 到 Vuex store
-  Vue.use(NotifierPlugin, { store })
+  Vue.use(NotifierPlugin, { store, isClient })
   // Vue 插件式引入：DataView
   Vue.use(DataViewPlugin)
   // Vue 插件式引入：Template

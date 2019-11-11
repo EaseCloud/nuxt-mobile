@@ -1,9 +1,6 @@
 export default {
   namespaced: true,
-  state: {
-    dialogs: [],
-    notify_items: []
-  },
+  state: () => ({ dialogs: [], notify_items: [] }),
   actions: {
     addNotify ({ commit, state, dispatch }, message, delay = 3000, closable = false) {
       const item = { message, delay, closable }
@@ -35,7 +32,7 @@ export default {
       state.dialogs.push(dialog)
       return dialog
     },
-    closeDialog(state, dialog) {
+    closeDialog (state, dialog) {
       const pos = state.dialogs.indexOf(dialog)
       if (pos > -1) state.dialogs.splice(pos, 1)
     }

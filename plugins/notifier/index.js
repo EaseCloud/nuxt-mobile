@@ -3,8 +3,9 @@ import store from './store'
 
 export default {
   install (Vue, options) {
+    // console.log('options', options)
     if (options && options.store) {
-      options.store.registerModule('notifier', store)
+      options.store.registerModule('notifier', store, { preserveState: !!options.isClient })
     }
     Vue.mixin({
       components: {
