@@ -8,77 +8,81 @@
                      :startY="0"
                      @pulling-down="reload()"
                      @pulling-up="loadMore()">
-    <ul class="view-list" v-if="initialized">
-      <li class="view-item" v-for="(item, i) in items"
-          :style="{'border-left-color': rendering.ribbonColor&&finalizeSync(rendering.ribbonColor, item)}">
-        <div class="item-header">
-          <div class="item-title">
-            <render-component :render="rendering.itemTitle"
-                              :self="$this" :args="item"></render-component>
-          </div>
-          <div class="item-subtitle">
-            <render-component :render="rendering.itemSubtitle"
-                              :self="$this" :args="item"></render-component>
-          </div>
-        </div>
-        <div class="item-body"
-             :class="{'has-thumbnail': !!rendering.thumbnail}">
-          <div class="thumbnail">
-            <render-component :render="rendering.thumbnail"
-                              :self="$this" :args="item"></render-component>
-          </div>
-          <div class="item-field" v-for="field in fields"
-               v-if="field.display===void 0||finalizeSync(field.display,item)">
-            <div class="item-field-label">{{field.label}}:</div>
-            <div class="item-field-content">
-              <render-component :render="renderCell"
-                                :self="$this" :args="[field, i]"></render-component>
+    <div class="view-list" v-if="initialized">
+      <template v-for="(item, i) in items">
+        <render-component :render="rendering.item" :self="$this" :args="item"
+                          v-if="rendering.item"></render-component>
+        <div class="view-item" v-else
+             :style="{'border-left-color': rendering.ribbonColor&&finalizeSync(rendering.ribbonColor, item)}">
+          <div class="item-header">
+            <div class="item-title">
+              <render-component :render="rendering.itemTitle"
+                                :self="$this" :args="item"></render-component>
+            </div>
+            <div class="item-subtitle">
+              <render-component :render="rendering.itemSubtitle"
+                                :self="$this" :args="item"></render-component>
             </div>
           </div>
-          <!--<div class="item-field">仓库编号: {{item.repository_num}}</div>-->
-          <!--<div class="item-field">仓库区域: {{item.repository_zone}}</div>-->
-        </div>
-        <div class="item-footer">
-          <div class="item-info">
-            <render-component :render="rendering.itemInfo"
-                              :self="$this" :args="item"></render-component>
+          <div class="item-body"
+               :class="{'has-thumbnail': !!rendering.thumbnail}">
+            <div class="thumbnail">
+              <render-component :render="rendering.thumbnail"
+                                :self="$this" :args="item"></render-component>
+            </div>
+            <div class="item-field" v-for="field in fields"
+                 v-if="field.display===void 0||finalizeSync(field.display,item)">
+              <div class="item-field-label">{{field.label}}:</div>
+              <div class="item-field-content">
+                <render-component :render="renderCell"
+                                  :self="$this" :args="[field, i]"></render-component>
+              </div>
+            </div>
+            <!--<div class="item-field">仓库编号: {{item.repository_num}}</div>-->
+            <!--<div class="item-field">仓库区域: {{item.repository_zone}}</div>-->
           </div>
-          <div class="item-actions">
-            <!--<nuxt-link :to="'/main/admin/warehouse_sheet/'+item.id"-->
-            <!--class="btn-action">查看-->
-            <!--</nuxt-link>-->
-            <!-- TODO: 动态的动作重构 -->
-            <a v-for="action in actions"
-               v-if="action.display===void 0||finalizeSync(action.display,item)"
-               class="btn-action" :class="{[action.buttonClass||'default']:true}"
-               @click="action.action.apply($this, [item])">
-              {{action.label}}
-            </a>
-            <a class="btn-action default"
-               v-if="options.can_edit===void 0||finalizeSync(options.can_edit,item)"
-               @click="editItem(item)">查看</a>
-            <a class="btn-action error"
-               v-if="options.can_delete===void 0||finalizeSync(options.can_delete,item)"
-               @click="deleteItem(item)">删除</a>
-            <!--//       if (vm.options.can_delete === void 0 || vm.finalizeSync(vm.options.can_delete, item)) {-->
-            <!--//         controls.push(h('Poptip', {-->
-            <!--//           props: {-->
-            <!--//             confirm: true,-->
-            <!--//             title: '确认删除这项数据？',-->
-            <!--//             placement: 'left'-->
-            <!--//           },-->
-            <!--//           on: { 'on-ok': () => vm.actionDelete(item).then(() => vm.reload()) }-->
-            <!--//         }, [h(-->
-            <!--//           'Button', {-->
-            <!--//             props: { size: 'small', type: 'dashed' }-->
-            <!--//           }, '删除'-->
-            <!--//         )]))-->
-            <!--//         controls.push(vm._v(' '))-->
-            <!--//       }-->
+          <div class="item-footer">
+            <div class="item-info">
+              <render-component :render="rendering.itemInfo"
+                                :self="$this" :args="item"></render-component>
+            </div>
+            <div class="item-actions">
+              <!--<nuxt-link :to="'/main/admin/warehouse_sheet/'+item.id"-->
+              <!--class="btn-action">查看-->
+              <!--</nuxt-link>-->
+              <!-- TODO: 动态的动作重构 -->
+              <a v-for="action in actions"
+                 v-if="action.display===void 0||finalizeSync(action.display,item)"
+                 class="btn-action" :class="{[action.buttonClass||'default']:true}"
+                 @click="action.action.apply($this, [item])">
+                {{action.label}}
+              </a>
+              <a class="btn-action default"
+                 v-if="options.can_edit===void 0||finalizeSync(options.can_edit,item)"
+                 @click="editItem(item)">查看</a>
+              <a class="btn-action error"
+                 v-if="options.can_delete===void 0||finalizeSync(options.can_delete,item)"
+                 @click="deleteItem(item)">删除</a>
+              <!--//       if (vm.options.can_delete === void 0 || vm.finalizeSync(vm.options.can_delete, item)) {-->
+              <!--//         controls.push(h('Poptip', {-->
+              <!--//           props: {-->
+              <!--//             confirm: true,-->
+              <!--//             title: '确认删除这项数据？',-->
+              <!--//             placement: 'left'-->
+              <!--//           },-->
+              <!--//           on: { 'on-ok': () => vm.actionDelete(item).then(() => vm.reload()) }-->
+              <!--//         }, [h(-->
+              <!--//           'Button', {-->
+              <!--//             props: { size: 'small', type: 'dashed' }-->
+              <!--//           }, '删除'-->
+              <!--//         )]))-->
+              <!--//         controls.push(vm._v(' '))-->
+              <!--//       }-->
+            </div>
           </div>
         </div>
-      </li>
-    </ul>
+      </template>
+    </div>
     <!--<i-table ref="table"-->
     <!--v-if="initialized"-->
     <!--:columns="columns"-->
@@ -665,9 +669,9 @@ export default {
 <style lang="less" scoped>
 @import "../../../../assets/styles/defines";
 
-ul.view-list {
+.view-list {
   .clearfix();
-  li.view-item {
+  .view-item {
     margin: 20*@px;
     background: white;
     .rounded-corners(5*@px);
