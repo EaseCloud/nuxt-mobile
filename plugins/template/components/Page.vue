@@ -7,7 +7,7 @@
         <div class="title">{{navbar.title}}</div>
         <div class="actions" v-if="navbar.actions">
           <template v-for="action in navbar.actions"
-                    v-if="action.display===void 0||finalizeSync(action.display)">
+                    v-if="action.display===void 0||finalizeSync(action.display,context)">
             <fa :icon="action.icon" class="action-item"
                 @click="doAction(action.action, context)"></fa>
           </template>
@@ -22,9 +22,7 @@
         <div class="actions">
           <template v-for="action in actionbar.actions">
             <a class="action-item" :class="{[action.buttonClass||'default']: true}"
-               v-if="action.display === void 0 ||
-                     typeof(action.display) === 'function' && action.display.apply($this, [context]) ||
-                     typeof(action.display) !== 'function' && !!action.display"
+               v-if="action.display===void 0||finalizeSync(action.display,context)"
                @click="doAction(action.action, [context])">{{action.label}}</a>
           </template>
           <slot name="actions"></slot>

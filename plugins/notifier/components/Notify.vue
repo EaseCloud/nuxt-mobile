@@ -33,12 +33,11 @@ export default {
 .notify-item {
   position: relative;
   display: inline-block;
-  max-width: 80%;
+  max-width: 16rem;
   line-height: 1rem;
   font-size: 0.8rem;
   padding: 0.4rem 0.8rem;
   margin-bottom: 0.5rem;
-  z-index: 100;
   color: white;
   background: rgba(0, 0, 0, 0.75);
   .rounded-corners(0.9rem);

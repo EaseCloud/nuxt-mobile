@@ -46,10 +46,19 @@ export default {
 </script>
 
 <style lang="less">
-@import '../../../assets/less-template/template-defines';
+@import '../../../assets/styles/defines';
 
 .notify-list {
-  .fixed-bottom();
+  position: absolute;
+  bottom: 50*@px;
+  left: 0;
+  right: 0;
+  height: 0;
+  overflow-y: visible;
+  z-index: 100;
   text-align: center;
+  display: flex;
+  justify-content: flex-end;
+  flex-direction: column;
 }
 </style>

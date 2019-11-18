@@ -44,7 +44,8 @@ export default {
       }
     }
     // 考虑允许创建的时候加入 create 按钮
-    if (vm.finalizeSync(listViewOptions.options.can_create)) {
+    if (listViewOptions.options.can_create === void 0
+      || vm.finalizeSync(listViewOptions.options.can_create)) {
       pageOptions.navbar.actions.push({
         icon: 'plus',
         async action () {

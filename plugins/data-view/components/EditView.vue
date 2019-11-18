@@ -15,10 +15,11 @@
                finalizeSync(options.can_edit, getItem())"
          @click="submit()">保存</a>
       <a class="action-item danger"
-         v-if="options.can_delete === void 0 ||
-               finalizeSync(options.can_delete, getItem())"
+         v-if="Number($route.params.id) &&
+         (options.can_delete===void 0||finalizeSync(options.can_delete, getItem()))"
          @click="remove()">删除</a>
     </template>
+    <slot></slot>
   </empty-view>
 </template>
 
@@ -29,7 +30,7 @@ import EditViewForm from './EditViewForm.vue'
 export default {
   name: 'EditView',
   props: {
-    pageActions: { type: Array, default: [] },
+    pageActions: { type: Array, default: () => [] },
     ...EditViewForm.props,
   },
   computed: {
@@ -42,7 +43,7 @@ export default {
       }
     },
     // item () {
-    //   // TODO: 这个不怎么可靠，没办法触发更新
+    //   // TODO: 这个不可靠，无法触发更新，请用 getItem() 代替
     //   const vm = this
     //   return vm.$refs.form && vm.$refs.form.item
     // },
