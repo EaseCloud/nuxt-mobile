@@ -6,7 +6,8 @@
             @click="backOrRedirect(navbar.backUrl)"></fa>
         <div class="title">{{navbar.title}}</div>
         <div class="actions" v-if="navbar.actions">
-          <template v-for="action in navbar.actions">
+          <template v-for="action in navbar.actions"
+                    v-if="action.display===void 0||finalizeSync(action.display)">
             <fa :icon="action.icon" class="action-item"
                 @click="doAction(action.action, context)"></fa>
           </template>

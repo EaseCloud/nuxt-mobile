@@ -3,6 +3,7 @@
   <empty-view :title="title"
               :context="getItem()"
               :actions="actions"
+              :pageActions="pageActions"
               :backUrl="getModelListRoute(model)">
     <edit-view-form v-bind="editViewOptions"
                     @loaded="$emit('loaded', $event)"
@@ -28,7 +29,8 @@ import EditViewForm from './EditViewForm.vue'
 export default {
   name: 'EditView',
   props: {
-    ...EditViewForm.props
+    pageActions: { type: Array, default: [] },
+    ...EditViewForm.props,
   },
   computed: {
     editViewOptions () {

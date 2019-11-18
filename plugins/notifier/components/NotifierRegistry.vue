@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="ready">
     <!-- dialogs -->
     <div class="dialog-list">
       <n-dialog v-for="(dialog, i) in $store.state.notifier.dialogs"
@@ -22,8 +22,16 @@ import { DialogOptions } from '../models'
 
 export default {
   components: { NNotify, NDialog },
-  mounted () {
+  data () {
+    return {
+      ready: false
+    }
+  },
+  async mounted () {
     const vm = this
+    await vm.waitFor(vm, '$store.state.notifier')
+    await vm.waitFor(vm, '$store.state.notifier.notify_items')
+    vm.ready = true
     // console.log(vm.notify_items)
     // vm.$store.dispatch('notifier/addNotify', '你好我成了', 3000)
   },

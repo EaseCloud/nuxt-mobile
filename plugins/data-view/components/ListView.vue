@@ -27,33 +27,48 @@ export default {
       type: Array
     }
   },
-  computed: {
-    pageOptions () {
-      const vm = this
-      const data = {
-        navbar: {
-          title: vm.title,
-          actions: [{
-            icon: 'plus',
-            async action () {
-              vm.$router.push(await vm.getModelEditRoute(vm.model, 0))
-            }
-          }]
+  data () {
+    const vm = this
+    const listViewOptions = {
+      // showPager: true,
+      ...vm.$attrs,
+      ...vm.$props,
+      // page: Number(vm.$route.query.page) || vm.$props.page,
+      pageSize: Number(vm.$route.query.page_size) || vm.$props.pageSize,
+      initQuery: vm.filterQuery({ ...vm.$route.query })
+    }
+    const pageOptions = {
+      navbar: {
+        title: vm.title,
+        actions: [...(listViewOptions.pageActions || [])]
+      }
+    }
+    // 考虑允许创建的时候加入 create 按钮
+    if (vm.finalizeSync(listViewOptions.options.can_create)) {
+      pageOptions.navbar.actions.push({
+        icon: 'plus',
+        async action () {
+          vm.$router.push(await vm.getModelEditRoute(listViewOptions.model, 0))
         }
-      }
-      return data
-    },
-    listViewOptions () {
-      const vm = this
-      return {
-        // showPager: true,
-        ...vm.$attrs,
-        ...vm.$props,
-        // page: Number(vm.$route.query.page) || vm.$props.page,
-        pageSize: Number(vm.$route.query.page_size) || vm.$props.pageSize,
-        initQuery: vm.filterQuery({ ...vm.$route.query })
-      }
-    },
+      })
+    }
+    return {
+      pageOptions,
+      listViewOptions,
+    }
+  },
+  computed: {
+    // listViewOptions () {
+    //   const vm = this
+    //   return {
+    //     // showPager: true,
+    //     ...vm.$attrs,
+    //     ...vm.$props,
+    //     // page: Number(vm.$route.query.page) || vm.$props.page,
+    //     pageSize: Number(vm.$route.query.page_size) || vm.$props.pageSize,
+    //     initQuery: vm.filterQuery({ ...vm.$route.query })
+    //   }
+    // },
     hooks () {
       const vm = this
       return { ...defaults.hooks, ...(vm.$attrs.hooks || {}) }

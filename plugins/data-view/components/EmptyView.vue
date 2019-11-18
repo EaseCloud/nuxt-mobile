@@ -18,6 +18,8 @@ export default {
      * 传入 actions 动作函数里面的上下文对象
      */
     context: { default: null },
+    // 导航栏操作按钮
+    pageActions: { type: Array, default: () => [] },
     // 操作按钮
     actions: { type: Array, default: () => [] },
     options: {
@@ -36,8 +38,8 @@ export default {
     pageOptions () {
       const vm = this
       return {
-        navbar: { title: vm.title, backUrl: vm.backUrl },
-        actionbar: !!vm.actions.length && { actions: vm.actions }
+        navbar: { title: vm.title, backUrl: vm.backUrl, actions: vm.pageActions },
+        actionbar: !!vm.actions.length && { actions: vm.actions } || null
       }
     }
   },
