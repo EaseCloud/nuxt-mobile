@@ -1,6 +1,10 @@
 export default {
   namespaced: true,
-  state: () => ({ dialogs: [], notify_items: [] }),
+  state: () => ({
+    dialogs: [],
+    notify_items: [],
+    file_pickers: []
+  }),
   actions: {
     addNotify ({ commit, state, dispatch }, message, delay = 3000, closable = false) {
       const item = { message, delay, closable }
@@ -17,7 +21,11 @@ export default {
     closeDialog ({ commit, state, dispatch }, dialog) {
       commit('closeDialog', dialog)
       return dialog
-    }
+    },
+    // addFilePicker ({ commit, state, dispatch }, filePicker) {
+    //   commit('addFilePicker', filePicker)
+    //   return
+    // }
   },
   mutations: {
     addNotify (state, item) {

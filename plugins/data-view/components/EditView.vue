@@ -1,22 +1,23 @@
 <template>
   <!-- 为了保证内层能够 update 到只能用这么恶心的办法 -->
   <empty-view :title="title"
-              :context="getItem()"
+              :context="item"
               :actions="actions"
               :pageActions="pageActions"
               :backUrl="getModelListRoute(model)">
     <edit-view-form v-bind="editViewOptions"
-                    @loaded="$emit('loaded', $event)"
+                    @loaded="$emit('loaded',$event)"
+                    @change="item=$event;$emit('change',$event)"
                     ref="form">
     </edit-view-form>
     <template slot="actions">
       <a class="action-item primary"
          v-if="options.can_edit === void 0 ||
-               finalizeSync(options.can_edit, getItem())"
+               finalizeSync(options.can_edit,item)"
          @click="submit()">保存</a>
       <a class="action-item danger"
          v-if="Number($route.params.id) &&
-         (options.can_delete===void 0||finalizeSync(options.can_delete, getItem()))"
+         (options.can_delete===void 0||finalizeSync(options.can_delete,item))"
          @click="remove()">删除</a>
     </template>
     <slot></slot>
@@ -42,11 +43,6 @@ export default {
         id: Number(vm.$props.id || vm.$route.params.id)
       }
     },
-    // item () {
-    //   // TODO: 这个不可靠，无法触发更新，请用 getItem() 代替
-    //   const vm = this
-    //   return vm.$refs.form && vm.$refs.form.item
-    // },
     hooks () {
       const vm = this
       return { ...defaults.hooks, ...(vm.$attrs.hooks || {}) }
@@ -54,15 +50,12 @@ export default {
   },
   data () {
     return {
+      item: null,
       cacheName: '',
       cachePath: ''
     }
   },
   methods: {
-    getItem () {
-      const vm = this
-      return vm.$refs.form && vm.$refs.form.getItem()
-    },
     async refresh () {
       const vm = this
       const form = await vm.waitFor(vm.$refs, 'form')

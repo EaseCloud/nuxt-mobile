@@ -11,6 +11,10 @@
         <n-notify @dismiss="dismiss" :item="notify"></n-notify>
       </div>
     </div>
+    <!-- TODO: file-picker -->
+    <!--<input class="file-picker" type="file"-->
+    <!--:accept="finalizeSync(fp.accept)||''" :multiple="!!finalizeSync(fp.multiple)"-->
+    <!--v-for="$store.state.notifier.file_pickers" />-->
   </div>
 </template>
 

@@ -177,6 +177,37 @@ export default {
       }
     })
   },
+  isWechat () {
+    return process.browser && /MicroMessenger/.test(navigator.userAgent)
+  },
+  async getWxJssdk () {
+    const vm = this
+    return new Promise((resolve, reject) => {
+      if (!vm.isWechat() || !window.wx) {
+        return reject()
+      }
+      window.wx.ready(() => {
+        // alert('微信环境加载成功');
+        resolve(window.wx)
+      }, () => {
+        reject()
+      })
+    })
+  },
+  async wxScan (desc = '') {
+    const vm = this
+    const wx = await vm.getWxJssdk()
+    return new Promise((resolve, reject) => {
+      wx.scanQRCode({
+        desc,
+        needResult: 1, // 默认为0，扫描结果由微信处理，1则直接返回扫描结果，
+        // scanType: ['qrCode'], // 可以指定扫二维码还是一维码，默认二者都有
+        async success (res) {
+          resolve(res.resultStr);
+        }
+      })
+    })
+  },
   /**
    * 前端页面跳转到 qq 地图的相应界面
    * @param name 地点名称
@@ -184,13 +215,26 @@ export default {
    * @param geo_lng 经度坐标
    * @param geo_label 详细地址文本
    */
-  redirectLocation ({ name, geo_lat, geo_lng, geo_label }) {
-    const url =
-      `https://3gimg.qq.com/lightmap/v1/marker/index.html?type=0` +
-      `&marker=coord%3A${geo_lat}%2C${geo_lng}%3Btitle%3A${name}%3Baddr%3A${geo_label}` +
-      `&key=OB4BZ-D4W3U-B7VVO-4PJWW-6TKDJ-WPB77&referer=myapp`
-    console.log(url)
-    location.href = url
+  async redirectLocation ({ name, geo_lat, geo_lng, geo_label }) {
+    const vm = this
+    const wx = await vm.getWxJssdk().catch(() => null)
+    if (wx) {
+      wx.openLocation({
+        latitude: geo_lat,
+        longitude: geo_lng,
+        name: name,
+        address: geo_label,
+        scale: 17,
+        infoUrl: ''
+      })
+    } else {
+      const url =
+        `https://3gimg.qq.com/lightmap/v1/marker/index.html?type=0` +
+        `&marker=coord%3A${geo_lat}%2C${geo_lng}%3Btitle%3A${name}%3Baddr%3A${geo_label}` +
+        `&key=OB4BZ-D4W3U-B7VVO-4PJWW-6TKDJ-WPB77&referer=myapp`
+      console.log(url)
+      location.href = url
+    }
   },
   /**
    * 获取当前的 GPS 定位坐标
@@ -262,4 +306,7 @@ export default {
       })
     })
   },
+  px (pixel) {
+    return `${pixel / 750 * 20}rem`
+  }
 }

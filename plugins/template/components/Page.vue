@@ -9,7 +9,7 @@
           <template v-for="action in navbar.actions"
                     v-if="action.display===void 0||finalizeSync(action.display,context)">
             <fa :icon="action.icon" class="action-item"
-                @click="doAction(action.action, context)"></fa>
+                @click="doAction(action.action,[context])"></fa>
           </template>
         </div>
       </div>
@@ -19,6 +19,9 @@
     </div>
     <slot name="actionbar">
       <div class="action-bar" v-if="actionbar">
+        <div class="info">
+          <slot name="actionbar-info"></slot>
+        </div>
         <div class="actions">
           <template v-for="action in actionbar.actions">
             <a class="action-item" :class="{[action.buttonClass||'default']: true}"
@@ -120,14 +123,17 @@ export default {
     .fixed-bottom();
     font-size: 32*@px;
     height: 88*@px;
+    line-height: 88*@px;
     background: white;
     border-top: 1px solid @color-border;
+    .info {
+      display: inline-block;
+    }
     .actions {
       float: right;
       .action-item {
         float: left;
         display: block;
-        line-height: 88*@px;
         padding: 0 30*@px;
         &.default {
           color: @color-default;
@@ -158,11 +164,12 @@ export default {
   }
   .page-body {
     .fill-absolute();
+    overflow: auto;
     &.with-navbar {
       top: 88*@px;
     }
-    &.with-action-bar {
-      bottom: 148*@px;
+    &.with-actionbar {
+      bottom: 88*@px;
     }
   }
 }

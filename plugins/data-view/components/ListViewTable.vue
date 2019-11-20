@@ -648,11 +648,13 @@ export default {
       const vm = this
       await vm.confirm('确认删除这个对象？')
       await vm.actionDelete(item)
-      const pos = vm.items.indexOf(item)
-      console.log(vm.items)
-      // 删除的话不刷新，只移除一个元素，免得打断用户体验
-      if (pos > 1) vm.items.splice(pos, 1)
-      console.log(vm.items)
+      vm.reload()
+      // // 删除的话不刷新，只移除一个元素，免得打断用户体验
+      // const pos = vm.items.indexOf(item)
+      // console.log(vm.items)
+      // if (pos > 1) vm.items.splice(pos, 1)
+      // console.log(vm.items)
+
     }
   },
   mounted () {

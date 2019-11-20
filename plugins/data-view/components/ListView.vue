@@ -5,6 +5,7 @@
       注意：tab 的 query 可能要设置对应的清除参数 {status:null}
       才能清除其他 tab 例如 {status:'active'} 的过滤-->
       <li v-for="tab in tabs"
+          v-if="tab.display===void 0||finalizeSync(tab.display)"
           class="tab-item" :class="{active:($route.query.__tab__||'')===(tab.key||'')}">
         <a @click="tabTo(tab)">{{tab.label}}</a>
       </li>
@@ -43,7 +44,7 @@ export default {
         actions: [...(listViewOptions.pageActions || [])]
       }
     }
-    // 考虑允许创建的时候加入 create 按钮
+    // 考虑允许创建的时候加入 createinfo
     if (listViewOptions.options.can_create === void 0
       || vm.finalizeSync(listViewOptions.options.can_create)) {
       pageOptions.navbar.actions.push({

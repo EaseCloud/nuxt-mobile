@@ -1,116 +1,204 @@
 <template>
   <div v-if="initialized" class="embed-form">
-    <div class="form-field"
-         v-for="(field, i) in fields"
-         v-if="field.final && (field.final.display === void 0 || field.final.display)"
-         :key="field.key+'_'+i">
-      <div class="form-field-label">
-        <span class="required" v-if="field.final.required">*</span>
-        {{field.label}}
-      </div>
-      <div class="form-field-actions">
-        <template v-for="(action, i) in field.actions"
-                  v-if="action.display===void 0||finalizeSync(action.display, field.context.item)">
-          <i-button :key="i"
-                    size="small"
-                    :type="action.buttonType"
-                    @click="doFieldAction(action, field)">{{action.label}}
-          </i-button>
-          <i :key="'_'+i"><!--避免按钮之间粘在一起--></i>
-        </template>
-      </div>
-      <div class="form-field-content">
-        <!-- type: input -->
-        <form-field-input v-if="(field.type||'input')==='input'"
-                          :field="field"
-                          @input="updateField(field, $event)"></form-field-input>
-        <!-- type: number -->
-        <form-field-number v-else-if="field.type==='number'"
-                           :field="field"
-                           @input="updateField(field, $event)"></form-field-number>
-        <!-- type: map -->
-        <form-field-map v-else-if="field.type==='map'"
-                        :field="field"
-                        @input="updateField(field, $event)"></form-field-map>
-        <!-- type: label -->
-        <form-field-label v-else-if="field.type==='label'"
-                          :field="field"
-                          @input="updateField(field, $event)"></form-field-label>
-        <!-- type: select -->
-        <form-field-select v-else-if="field.type==='select'"
-                           :field="field"
-                           @input="updateField(field, $event)"></form-field-select>
-        <!-- type: cascade -->
-        <form-field-cascade v-else-if="field.type==='cascade'"
-                            :field="field"
-                            @input="updateField(field, $event)"></form-field-cascade>
-        <!-- type: date -->
-        <form-field-date v-else-if="field.type==='date'"
-                         :field="field"
-                         @input="updateField(field, $event)"></form-field-date>
-        <!-- type: radio -->
-        <form-field-radio v-else-if="field.type==='radio'"
-                          :field="field"
-                          @input="updateField(field, $event)"></form-field-radio>
-        <!-- type: checkbox -->
-        <form-field-checkbox v-else-if="field.type==='checkbox'"
-                             :field="field"
-                             @input="updateField(field, $event)"></form-field-checkbox>
-        <!-- type: rate -->
-        <form-field-rate v-else-if="field.type==='rate'"
-                         :field="field"
-                         @input="updateField(field, $event)"></form-field-rate>
-        <!-- type: color -->
-        <form-field-color v-else-if="field.type==='color'"
-                          :field="field"
-                          @input="updateField(field, $event)"></form-field-color>
-        <!-- type: upload -->
-        <form-field-upload v-else-if="field.type==='upload'"
-                           :field="field"
-                           @input="updateField(field, $event)"></form-field-upload>
-        <!-- type: image -->
-        <form-field-image v-else-if="field.type==='image'"
-                          :field="field"
-                          @input="updateField(field, $event)"></form-field-image>
-        <!-- type: gallery -->
-        <form-field-gallery v-else-if="field.type==='gallery'"
-                            :field="field"
-                            @input="updateField(field, $event)"></form-field-gallery>
-        <!-- type: switch -->
-        <form-field-switch v-else-if="field.type==='switch'"
-                           :field="field"
-                           @input="updateField(field, $event)"></form-field-switch>
-        <!-- type: district -->
-        <form-field-district v-else-if="field.type==='district'"
-                             :field="field"
-                             @input="updateField(field, $event)"></form-field-district>
-        <!-- type: editor -->
-        <form-field-editor v-else-if="field.type==='editor'"
-                           :field="field"
-                           @input="updateField(field, $event)"></form-field-editor>
-        <!-- type: object -->
-        <form-field-object v-else-if="field.type==='object'"
-                           :field="field"
-                           @input="updateField(field, $event)"></form-field-object>
-        <!-- type: multi-object -->
-        <form-field-multi-object v-else-if="field.type==='multi-object'"
-                                 :field="field"
-                                 @input="updateField(field, $event)"></form-field-multi-object>
-        <!-- type: list-view -->
-        <form-field-list-view v-else-if="field.type==='list-view'"
-                              :field="field"
-                              @input="updateField(field, $event)"></form-field-list-view>
-        <!-- type: render -->
-        <form-field-render v-else-if="field.type==='render'"
-                           :field="field"
-                           @input="updateField(field, $event)"></form-field-render>
-        <!-- type: undefined -->
-        <div v-else>未实现的字段类型：{{field.type}}</div>
+    <template
+      v-for="(field, i) in fields"
+      v-if="field.final && (field.final.display === void 0 || field.final.display)">
 
-        <!-- description -->
-        <div v-if="field.description" class="form-field-description">{{field.description}}</div>
-      </div>
-    </div>
+      <!-- type: input -->
+      <form-field-input v-if="(field.type||'input')==='input'"
+                        :field="field"
+                        @input="updateField(field, $event)"></form-field-input>
+      <!-- type: label -->
+      <form-field-label v-else-if="field.type==='label'"
+                        :field="field"
+                        @input="updateField(field, $event)"></form-field-label>
+      <!-- type: number -->
+      <form-field-number v-else-if="field.type==='number'"
+                         :field="field"
+                         @input="updateField(field, $event)"></form-field-number>
+      <!-- type: map -->
+      <form-field-map v-else-if="field.type==='map'"
+                      :field="field"
+                      @input="updateField(field, $event)"></form-field-map>
+      <!-- type: select -->
+      <form-field-select v-else-if="field.type==='select'"
+                         :field="field"
+                         @input="updateField(field, $event)"></form-field-select>
+      <!-- type: cascade -->
+      <form-field-cascade v-else-if="field.type==='cascade'"
+                          :field="field"
+                          @input="updateField(field, $event)"></form-field-cascade>
+      <!-- type: date -->
+      <form-field-date v-else-if="field.type==='date'"
+                       :field="field"
+                       @input="updateField(field, $event)"></form-field-date>
+      <!-- type: radio -->
+      <form-field-radio v-else-if="field.type==='radio'"
+                        :field="field"
+                        @input="updateField(field, $event)"></form-field-radio>
+      <!-- type: checkbox -->
+      <form-field-checkbox v-else-if="field.type==='checkbox'"
+                           :field="field"
+                           @input="updateField(field, $event)"></form-field-checkbox>
+      <!-- type: rate -->
+      <form-field-rate v-else-if="field.type==='rate'"
+                       :field="field"
+                       @input="updateField(field, $event)"></form-field-rate>
+      <!-- type: color -->
+      <form-field-color v-else-if="field.type==='color'"
+                        :field="field"
+                        @input="updateField(field, $event)"></form-field-color>
+      <!-- type: upload -->
+      <form-field-upload v-else-if="field.type==='upload'"
+                         :field="field"
+                         @input="updateField(field, $event)"></form-field-upload>
+      <!-- type: image -->
+      <form-field-image v-else-if="field.type==='image'"
+                        :field="field"
+                        @input="updateField(field, $event)"></form-field-image>
+      <!-- type: gallery -->
+      <form-field-gallery v-else-if="field.type==='gallery'"
+                          :field="field"
+                          @input="updateField(field, $event)"></form-field-gallery>
+      <!-- type: switch -->
+      <form-field-switch v-else-if="field.type==='switch'"
+                         :field="field"
+                         @input="updateField(field, $event)"></form-field-switch>
+      <!-- type: district -->
+      <form-field-district v-else-if="field.type==='district'"
+                           :field="field"
+                           @input="updateField(field, $event)"></form-field-district>
+      <!-- type: editor -->
+      <form-field-editor v-else-if="field.type==='editor'"
+                         :field="field"
+                         @input="updateField(field, $event)"></form-field-editor>
+      <!-- type: object -->
+      <form-field-object v-else-if="field.type==='object'"
+                         :field="field"
+                         @input="updateField(field, $event)"></form-field-object>
+      <!-- type: multi-object -->
+      <form-field-multi-object v-else-if="field.type==='multi-object'"
+                               :field="field"
+                               @input="updateField(field, $event)"></form-field-multi-object>
+      <!-- type: list-view -->
+      <form-field-list-view v-else-if="field.type==='list-view'"
+                            :field="field"
+                            @input="updateField(field, $event)"></form-field-list-view>
+      <!-- type: render -->
+      <form-field-render v-else-if="field.type==='render'"
+                         :field="field"
+                         @input="updateField(field, $event)"></form-field-render>
+      <!-- type: undefined -->
+      <div v-else>未实现的字段类型：{{field.type}}</div>
+
+
+      <!--<div class="form-field-label">-->
+      <!--<span class="required" v-if="field.final.required">*</span>-->
+      <!--{{field.label}}-->
+      <!--</div>-->
+      <!--<div class="form-field-actions">-->
+      <!--<template v-for="(action, i) in field.actions"-->
+      <!--v-if="action.display===void 0||finalizeSync(action.display, field.context.item)">-->
+      <!--<i-button :key="i"-->
+      <!--size="small"-->
+      <!--:type="action.buttonType"-->
+      <!--@click="doFieldAction(action, field)">{{action.label}}-->
+      <!--</i-button>-->
+      <!--<i :key="'_'+i">&lt;!&ndash;避免按钮之间粘在一起&ndash;&gt;</i>-->
+      <!--</template>-->
+      <!--</div>-->
+      <!--<div class="form-field-content">-->
+      <!--&lt;!&ndash; type: input &ndash;&gt;-->
+      <!--<form-field-input v-if="(field.type||'input')==='input'"-->
+      <!--:field="field"-->
+      <!--@input="updateField(field, $event)"></form-field-input>-->
+      <!--&lt;!&ndash; type: number &ndash;&gt;-->
+      <!--<form-field-number v-else-if="field.type==='number'"-->
+      <!--:field="field"-->
+      <!--@input="updateField(field, $event)"></form-field-number>-->
+      <!--&lt;!&ndash; type: map &ndash;&gt;-->
+      <!--<form-field-map v-else-if="field.type==='map'"-->
+      <!--:field="field"-->
+      <!--@input="updateField(field, $event)"></form-field-map>-->
+      <!--&lt;!&ndash; type: label &ndash;&gt;-->
+      <!--<form-field-label v-else-if="field.type==='label'"-->
+      <!--:field="field"-->
+      <!--@input="updateField(field, $event)"></form-field-label>-->
+      <!--&lt;!&ndash; type: select &ndash;&gt;-->
+      <!--<form-field-select v-else-if="field.type==='select'"-->
+      <!--:field="field"-->
+      <!--@input="updateField(field, $event)"></form-field-select>-->
+      <!--&lt;!&ndash; type: cascade &ndash;&gt;-->
+      <!--<form-field-cascade v-else-if="field.type==='cascade'"-->
+      <!--:field="field"-->
+      <!--@input="updateField(field, $event)"></form-field-cascade>-->
+      <!--&lt;!&ndash; type: date &ndash;&gt;-->
+      <!--<form-field-date v-else-if="field.type==='date'"-->
+      <!--:field="field"-->
+      <!--@input="updateField(field, $event)"></form-field-date>-->
+      <!--&lt;!&ndash; type: radio &ndash;&gt;-->
+      <!--<form-field-radio v-else-if="field.type==='radio'"-->
+      <!--:field="field"-->
+      <!--@input="updateField(field, $event)"></form-field-radio>-->
+      <!--&lt;!&ndash; type: checkbox &ndash;&gt;-->
+      <!--<form-field-checkbox v-else-if="field.type==='checkbox'"-->
+      <!--:field="field"-->
+      <!--@input="updateField(field, $event)"></form-field-checkbox>-->
+      <!--&lt;!&ndash; type: rate &ndash;&gt;-->
+      <!--<form-field-rate v-else-if="field.type==='rate'"-->
+      <!--:field="field"-->
+      <!--@input="updateField(field, $event)"></form-field-rate>-->
+      <!--&lt;!&ndash; type: color &ndash;&gt;-->
+      <!--<form-field-color v-else-if="field.type==='color'"-->
+      <!--:field="field"-->
+      <!--@input="updateField(field, $event)"></form-field-color>-->
+      <!--&lt;!&ndash; type: upload &ndash;&gt;-->
+      <!--<form-field-upload v-else-if="field.type==='upload'"-->
+      <!--:field="field"-->
+      <!--@input="updateField(field, $event)"></form-field-upload>-->
+      <!--&lt;!&ndash; type: image &ndash;&gt;-->
+      <!--<form-field-image v-else-if="field.type==='image'"-->
+      <!--:field="field"-->
+      <!--@input="updateField(field, $event)"></form-field-image>-->
+      <!--&lt;!&ndash; type: gallery &ndash;&gt;-->
+      <!--<form-field-gallery v-else-if="field.type==='gallery'"-->
+      <!--:field="field"-->
+      <!--@input="updateField(field, $event)"></form-field-gallery>-->
+      <!--&lt;!&ndash; type: switch &ndash;&gt;-->
+      <!--<form-field-switch v-else-if="field.type==='switch'"-->
+      <!--:field="field"-->
+      <!--@input="updateField(field, $event)"></form-field-switch>-->
+      <!--&lt;!&ndash; type: district &ndash;&gt;-->
+      <!--<form-field-district v-else-if="field.type==='district'"-->
+      <!--:field="field"-->
+      <!--@input="updateField(field, $event)"></form-field-district>-->
+      <!--&lt;!&ndash; type: editor &ndash;&gt;-->
+      <!--<form-field-editor v-else-if="field.type==='editor'"-->
+      <!--:field="field"-->
+      <!--@input="updateField(field, $event)"></form-field-editor>-->
+      <!--&lt;!&ndash; type: object &ndash;&gt;-->
+      <!--<form-field-object v-else-if="field.type==='object'"-->
+      <!--:field="field"-->
+      <!--@input="updateField(field, $event)"></form-field-object>-->
+      <!--&lt;!&ndash; type: multi-object &ndash;&gt;-->
+      <!--<form-field-multi-object v-else-if="field.type==='multi-object'"-->
+      <!--:field="field"-->
+      <!--@input="updateField(field, $event)"></form-field-multi-object>-->
+      <!--&lt;!&ndash; type: list-view &ndash;&gt;-->
+      <!--<form-field-list-view v-else-if="field.type==='list-view'"-->
+      <!--:field="field"-->
+      <!--@input="updateField(field, $event)"></form-field-list-view>-->
+      <!--&lt;!&ndash; type: render &ndash;&gt;-->
+      <!--<form-field-render v-else-if="field.type==='render'"-->
+      <!--:field="field"-->
+      <!--@input="updateField(field, $event)"></form-field-render>-->
+      <!--&lt;!&ndash; type: undefined &ndash;&gt;-->
+      <!--<div v-else>未实现的字段类型：{{field.type}}</div>-->
+
+      <!--&lt;!&ndash; description &ndash;&gt;-->
+      <!--<div v-if="field.description" class="form-field-description">{{field.description}}</div>-->
+      <!--</div>-->
+    </template>
   </div>
 </template>
 
@@ -123,6 +211,7 @@ export default {
   components: { ...formComponents },
   mixins: [fieldSetMixins],
   props: {
+    defaultItem: null,
     noInit: {
       // 默认情况下，noInit=false，EmbedForm 自动根据字段设置初始化 item 然后渲染
       // 如果设置 noInit=true，EmbedForm 将挂起渲染行为，直到外部显式调用 setItem 输入对象
@@ -151,11 +240,13 @@ export default {
       if (vm.noInit) return
       // 为了避免在没有任何动作之前点击保存提交的表单会有字段 undefined 的情况
       // 所有指定的 default 值的字段都会先手动设置进去
-      const item = {}
-      vm.fields.forEach((field, i) => {
-        // 设置默认值
-        if (field.key) vm.setProperty(item, field.key, field.default)
-      })
+      const item = vm.defaultItem || {}
+      if (!vm.defaultItem) {
+        await Promise.all(vm.fields.map(async (field, i) => {
+          // 设置默认值
+          if (field.key) vm.setProperty(item, field.key, await vm.finalize(field.default))
+        }))
+      }
       await vm.setItem(item)
     },
     async setItem (item) {
@@ -190,7 +281,7 @@ export default {
         await field.preRender.apply(vm, [field])
       }
       // 获取初始值
-      let value = await vm.evaluate(vm.item, field.key, field.default)
+      let value = await vm.evaluate(vm.item, field.key, await vm.finalize(field.default, vm.item))
       // 根据 filter 过滤
       if (field.filter) value = await field.filter.apply(vm, [value])
       // 根据 mapper 过滤
@@ -252,7 +343,7 @@ export default {
         // 校验
         if (field.validator) {
           try {
-            const value = await vm.evaluate(vm.item, field.key, field.default)
+            const value = await vm.evaluate(vm.item, field.key, field.final.default)
             await field.validator.apply(vm, [value, field])
           } catch (e) {
             vm.notify(e.message)
@@ -296,8 +387,8 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
-@import '../../../assets/less-template/template-defines';
+<style lang="less">
+@import '../../../assets/styles/defines';
 
 @px: 100vw / 750;
 
@@ -309,6 +400,7 @@ export default {
     margin-bottom: -1px;
     font-size: 32*@px;
     background: white;
+    position: relative;
     .clearfix();
     .form-field-label {
       float: left;
@@ -322,6 +414,25 @@ export default {
       margin-left: 200*@px;
       text-align: right;
       padding-right: 30*@px;
+      &.empty {
+        color: @color-placeholder;
+      }
+      &.editable {
+        padding-right: 64*@px;
+        &::after {
+          content: "";
+          display: block;
+          position: absolute;
+          right: 0;
+          top: 0;
+          bottom: 0;
+          margin: auto;
+          width: 64*@px;
+          height: 88*@px;
+          background: url('../../../assets/images/list-arrow.png') no-repeat 50% 50%;
+          background-size: 14.5*@px;
+        }
+      }
     }
   }
 }
