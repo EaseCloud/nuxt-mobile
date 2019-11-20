@@ -22,6 +22,29 @@ export default {
           const vm = this
           return vm.$store.dispatch('notifier/addNotify', message, delay, closable)
         },
+        async pickFile (accept = false, multiple = false) {
+          // TODO: 这里还有一个 BUG，如果你去 await 一个 pickFile，但是它取消的话
+          // 这个 promise 会一直 hold 住，直到路由跳转导致页面被销毁才能 await 到一个 reject
+          const vm = this
+          return new Promise((resolve, reject) => {
+            const filePicker = {
+              accept,
+              multiple,
+              resolve,
+              reject,
+              callback (files) {
+                vm.$store.dispatch('notifier/dismissFilePicker', filePicker)
+                if (files.length) resolve(multiple ? files : files[0])
+                else reject()
+              }
+            }
+            vm.$store.dispatch('notifier/pickFile', filePicker)
+          })
+        },
+        async pickImage () {
+          const vm = this
+          return vm.pickFile('image/*')
+        },
         async confirm (message, title = '操作确认') {
           const vm = this
           // 苟且实现
@@ -121,7 +144,9 @@ export default {
                   style: {
                     position: 'relative',
                     padding: `${vm.px(30)} 0`,
-                    lineHeight: vm.px(64)
+                    lineHeight: vm.px(64),
+                    maxHeight: '100vw',
+                    overflow: 'auto'
                   }
                 }, vm.wrapChoices(choices).map((choice, i) => {
                   return h('li', {

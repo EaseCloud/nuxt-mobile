@@ -11,21 +11,21 @@
         <n-notify @dismiss="dismiss" :item="notify"></n-notify>
       </div>
     </div>
-    <!-- TODO: file-picker -->
-    <!--<input class="file-picker" type="file"-->
-    <!--:accept="finalizeSync(fp.accept)||''" :multiple="!!finalizeSync(fp.multiple)"-->
-    <!--v-for="$store.state.notifier.file_pickers" />-->
+    <!-- file-picker -->
+    <file-picker v-for="filePicker in $store.state.notifier.file_pickers"
+                 :options="filePicker"></file-picker>
   </div>
 </template>
 
 <script>
 import NNotify from './Notify'
 import NDialog from './Dialog'
+import FilePicker from './FilePicker'
 
 import { DialogOptions } from '../models'
 
 export default {
-  components: { NNotify, NDialog },
+  components: { FilePicker, NNotify, NDialog },
   data () {
     return {
       ready: false
@@ -38,6 +38,16 @@ export default {
     vm.ready = true
     // console.log(vm.notify_items)
     // vm.$store.dispatch('notifier/addNotify', '你好我成了', 3000)
+  },
+  async destroyed () {
+    console.log('NotifierRegistry Destroyed')
+    // 因为 filePicker 的取消没有回调，因此当路由跳转，注册器销毁的时候
+    // 就应该手动销毁所有的 filePicker
+    const vm = this
+    vm.$store.state.notifier.file_pickers.forEach(fp => {
+      vm.$store.dispatch('notifier/dismissFilePicker', fp)
+      fp.reject()
+    })
   },
   methods: {
     dismiss (item) {

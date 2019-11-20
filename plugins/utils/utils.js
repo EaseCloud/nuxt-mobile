@@ -308,5 +308,12 @@ export default {
   },
   px (pixel) {
     return `${pixel / 750 * 20}rem`
+  },
+  async django_upload_image (file) {
+    const vm = this
+    const formData = new FormData()
+    formData.append('image', file)
+    const resp = await vm.api('image').post(formData)
+    return resp.data
   }
 }

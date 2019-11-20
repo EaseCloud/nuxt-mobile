@@ -1,70 +1,79 @@
 <template>
-  <div class="field-item field-item-image"
-       :style="{width: !!field.final.width && field.final.width}">
-    <!-- 图片浏览块 -->
-    <item-image-view
-      v-if="value"
-      :urls="[value]"
-      :readonly="field.readonly"
-      :disabled="field.disabled"
-      @input="handleInput"></item-image-view>
-    <!-- 上传块 -->
-    <item-image-uploader
-      v-else-if="!field.readonly && !field.disabled"
-      :action="field.action || ''"
-      :supportUpload="field.supportUpload === void 0 || field.supportUpload"
-      :supportLink="field.supportLink === void 0 || field.supportLink"
-      @input="handleInput"></item-image-uploader>
-    <!-- 禁用修改时 -->
-    <div v-else>（无）</div>
+  <div class="form-field form-field-image">
+    <div class="form-field-label">
+      <span class="required" v-if="field.final.required">*</span>
+      {{field.final.label}}
+    </div>
+    <div class="form-field-content">
+      <div class="field-item field-item-image">
+        <img :src="field.displayValue || config.image_placeholder_url" @click.stop="onClick" />
+        <a class="btn-reset" v-if="field.value" @click.stop="reset">&times;</a>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-  import ItemImageUploader from './components/ItemImageUploader.vue'
-  import ItemImageView from './components/ItemImageView.vue'
-
-  export default {
-    name: 'FormFieldImage',
-    components: { ItemImageView, ItemImageUploader },
-    props: {
-      field: {
-        type: Object,
-        default: () => {
-        }
-      }
-    },
-    data () {
-      return {
-        value: null,
-        status: 'finished',
-        percentage: 0
-      }
-    },
-    mounted () {
+export default {
+  name: 'FormFieldImage',
+  props: {
+    field: {
+      type: Object,
+      required: true
+    }
+  },
+  mounted () {
+    const vm = this
+    vm.field.$el = this
+    // 默认不进行回写
+    if (vm.field.onWriteField === void 0) vm.field.onWriteField = () => null
+  },
+  methods: {
+    async onClick () {
       const vm = this
-      vm.field.$el = this
-      // 默认不进行回写
-      if (vm.field.onWriteField === void 0) vm.field.onWriteField = () => null
+      vm.$emit('input', await vm.pickImage())
     },
-    methods: {
-      reload () {
-        const vm = this
-        vm.value = vm.field.value
-      },
-      update (value) {
-        const vm = this
-        vm.$emit('input', value)
-      },
-      handleUpload (file) {
-        const vm = this
-        vm.update(file)
-        return false
-      },
-      handleInput (data) {
-        const vm = this
-        vm.$emit('input', data)
-      }
+    async reset () {
+      const vm = this
+      await vm.confirm('确认清除图像？')
+      vm.$emit('input', null)
     }
   }
+}
 </script>
+
+<style lang="less" scoped>
+@import "../../../../assets/styles/defines";
+
+.form-field-image {
+  line-height: 140*@px;
+  .field-item-image {
+    img {
+      margin: 20*@px 0;
+      width: 100*@px;
+      height: 100*@px;
+      object-fit: cover;
+      display: block;
+      float: right;
+      border: 1px solid @color-border;
+      background: @color-bg-fade;
+    }
+    .btn-reset {
+      position: absolute;
+      top: 10*@px;
+      right: 20*@px;
+      display: block;
+      width: 30*@px;
+      height: 30*@px;
+      line-height: 30*@px;
+      border: 4*@px solid white;
+      text-align: center;
+      font-weight: bold;
+      color: white;
+      background: #AAA;
+      font-size: 30*@px;
+      .circle();
+    }
+  }
+}
+</style>

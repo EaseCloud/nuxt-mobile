@@ -5,7 +5,7 @@ export default {
   // FormFieldColor: () => import('./FormFieldColor.vue'),
   // FormFieldRadio: () => import('./FormFieldRadio.vue'),
   // FormFieldCheckbox: () => import('./FormFieldCheckbox.vue'),
-  // FormFieldImage: () => import('./FormFieldImage.vue'),
+  FormFieldImage: () => import('./FormFieldImage.vue'),
   // FormFieldUpload: () => import('./FormFieldUpload.vue'),
   // FormFieldEditor: () => import('./FormFieldEditor.vue'),
   // FormFieldGallery: () => import('./FormFieldGallery.vue'),
