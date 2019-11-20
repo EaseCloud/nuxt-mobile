@@ -43,5 +43,11 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
+@import "../../../../assets/styles/defines";
+
+.field-item-input {
+  padding: 20*@px 0;
+  line-height: 48*@px;
+}
 </style>

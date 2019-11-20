@@ -1,7 +1,7 @@
 <template>
   <div class="mask">
     <!--@click="$store.dispatch('notifier/closeDialog', options)">-->
-    <!-- mode 支持几种模式：bottom(默认,底部拉出) modal(模态弹窗) -->
+    <!-- mode 支持几种模式：bottom(默认,底部拉出) modal(模态弹窗) full(全屏) -->
     <div class="dialog" :class="{[options.mode||'bottom']: true}" @click.stop>
       <div class="dialog-header">
         <div class="dialog-title">{{options.title}}</div>
@@ -39,6 +39,17 @@ export default {
   z-index: 100;
   .fill-fixed();
   background: rgba(0, 0, 0, 0.1);
+  .dialog.full {
+    .dialog-header {
+      display: none;
+    }
+    .dialog-actions {
+      display: none;
+    }
+    .dialog-body {
+      .fill-fixed();
+    }
+  }
   .dialog.bottom {
     font-size: 32*@px;
     .fixed-bottom();
