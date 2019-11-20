@@ -144,9 +144,9 @@ export default {
   async finalize (term, ...args) {
     if (!term) return term
     if (term instanceof Function) {
-      return this.finalize(term.apply(this, args))
+      return this.finalize(await term.apply(this, args))
     }
-    if (term.then instanceof Function) return term
+    if (term.then instanceof Function) return this.finalize(await term)
     return term
   },
   /**

@@ -12,7 +12,6 @@ import defaults from '../defaults'
 
 export default {
   name: 'EditViewForm',
-  item: null,
   props: {
     // TODO: 所有属性支持的 finalize 函数格式需要确定并且文档化
     id: { type: Number, default: 0 },
@@ -45,16 +44,13 @@ export default {
     hooks () {
       const vm = this
       return { ...defaults.hooks, ...(vm.$attrs.hooks || {}) }
-    },
-    item () {
-      const vm = this
-      return vm.$refs.form.item
     }
   },
   data () {
     const vm = this
     return {
       id_: vm.id,
+      item: null,
       loading: false,
       initialized: false
     }

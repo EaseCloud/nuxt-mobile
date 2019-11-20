@@ -13,6 +13,46 @@ export default {
         NotifierRegistry
       },
       methods: {
+        openDialog (dialog) {
+          const vm = this
+          vm.$store.dispatch('notifier/openDialog', dialog)
+          return dialog
+        },
+        async notify (message, delay = 3000, closable = false) {
+          const vm = this
+          return vm.$store.dispatch('notifier/addNotify', message, delay, closable)
+        },
+        async confirm (message, title = '操作确认') {
+          const vm = this
+          // 苟且实现
+          // return window.confirm(message) ? Promise.resolve() : Promise.reject()
+          // 正式实现
+          return new Promise(async (resolve, reject) => {
+            const dialog = vm.openDialog(new DialogOptions({
+              title,
+              mode: 'modal',
+              okText: '确定',
+              cancelText: '取消',
+              onOk () {
+                vm.$store.dispatch('notifier/closeDialog', dialog)
+                resolve()
+              },
+              onCancel () {
+                vm.$store.dispatch('notifier/closeDialog', dialog)
+                reject('')
+              },
+              render (h) {
+                return h('div', {
+                  style: {
+                    position: 'relative',
+                    padding: vm.px(30),
+                    lineHeight: vm.px(45)
+                  }
+                }, message)
+              }
+            }))
+          })
+        },
         async prompt (message, default_value, placeholder = '') {
           const vm = this
           // 苟且实现
@@ -51,7 +91,7 @@ export default {
                       background: 'rgba(0, 0, 0, 0.02)',
                       width: '100%',
                       boxSizing: 'border-box',
-                      padding: `0 ${vm.px(20)}`
+                      padding: `0 ${vm.px(30)}`
                     },
                     on: {
                       input (e) {
@@ -64,45 +104,45 @@ export default {
             }))
           })
         },
-        async notify (message, delay = 3000, closable = false) {
+        async pickChoice (title, choices, default_value = '') {
           const vm = this
-          return vm.$store.dispatch('notifier/addNotify', message, delay, closable)
-        },
-        async confirm (message, title='操作确认') {
-          const vm = this
-          // 苟且实现
-          // return window.confirm(message) ? Promise.resolve() : Promise.reject()
-          // 正式实现
           return new Promise(async (resolve, reject) => {
             const dialog = vm.openDialog(new DialogOptions({
               title,
               mode: 'modal',
-              okText: '确定',
+              okText: '',
               cancelText: '取消',
-              onOk () {
-                vm.$store.dispatch('notifier/closeDialog', dialog)
-                resolve()
-              },
               onCancel () {
                 vm.$store.dispatch('notifier/closeDialog', dialog)
                 reject('')
               },
               render (h) {
-                return h('div', {
+                return h('ul', {
                   style: {
                     position: 'relative',
-                    padding: vm.px(30),
-                    lineHeight: vm.px(45)
+                    padding: `${vm.px(30)} 0`,
+                    lineHeight: vm.px(64)
                   }
-                }, message)
+                }, vm.wrapChoices(choices).map((choice, i) => {
+                  return h('li', {
+                    style: {
+                      lineHeight: vm.px(64),
+                      border: 0,
+                      boxSizing: 'border-box',
+                      color: choice.value === default_value ? '#2196F3' : 'inherit',
+                      padding: `0 ${vm.px(30)}`
+                    },
+                    on: {
+                      click () {
+                        vm.$store.dispatch('notifier/closeDialog', dialog)
+                        resolve(choice.value)
+                      }
+                    }
+                  }, choice.text)
+                }))
               }
             }))
           })
-        },
-        openDialog (dialog) {
-          const vm = this
-          vm.$store.dispatch('notifier/openDialog', dialog)
-          return dialog
         },
       }
     })

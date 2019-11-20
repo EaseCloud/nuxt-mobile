@@ -8,10 +8,10 @@
       <form-field-input v-if="(field.type||'input')==='input'"
                         :field="field"
                         @input="updateField(field, $event)"></form-field-input>
-      <!-- type: label -->
-      <form-field-label v-else-if="field.type==='label'"
-                        :field="field"
-                        @input="updateField(field, $event)"></form-field-label>
+      <!-- type: select -->
+      <form-field-select v-else-if="field.type==='select'"
+                         :field="field"
+                         @input="updateField(field, $event)"></form-field-select>
       <!-- type: number -->
       <form-field-number v-else-if="field.type==='number'"
                          :field="field"
@@ -20,10 +20,6 @@
       <form-field-map v-else-if="field.type==='map'"
                       :field="field"
                       @input="updateField(field, $event)"></form-field-map>
-      <!-- type: select -->
-      <form-field-select v-else-if="field.type==='select'"
-                         :field="field"
-                         @input="updateField(field, $event)"></form-field-select>
       <!-- type: cascade -->
       <form-field-cascade v-else-if="field.type==='cascade'"
                           :field="field"
@@ -282,15 +278,17 @@ export default {
       }
       // 获取初始值
       let value = await vm.evaluate(vm.item, field.key, await vm.finalize(field.default, vm.item))
+      vm.$set(field, 'value', value)
+      let displayValue = value
       // 根据 filter 过滤
-      if (field.filter) value = await field.filter.apply(vm, [value])
+      if (field.filter) displayValue = await field.filter.apply(vm, [displayValue])
       // 根据 mapper 过滤
       const mapper = await vm.finalize(field.mapper, vm)
       if (mapper) {
-        value = hasOwnProperty(mapper, value) ? mapper[value] : mapper.__default__
+        displayValue = mapper[displayValue] !== void 0 ? mapper[displayValue] : mapper.__default__
       }
       // Update，会直接影响到内层 EmbedForm 的绑定值
-      vm.$set(field, 'value', value)
+      vm.$set(field, 'displayValue', displayValue)
       // 后置钩子
       if (field.postRender) {
         await field.postRender.apply(vm, [field])
@@ -368,7 +366,6 @@ export default {
     // },
     async updateField (field, data) {
       const vm = this
-      // console.log('updateField', field.key, field.)
       // 如果指定 noSync，则不自动写回 field.value，而由托管的 onUpdate 处理所有更新事务
       if (field.data !== data && !field.noSync) field.value = data
       // onUpdate 的返回值可以控制是否执行 writeField，如果返回 === false 将跳过 writeField

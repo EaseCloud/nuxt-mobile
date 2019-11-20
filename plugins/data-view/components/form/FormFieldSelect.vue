@@ -1,50 +1,51 @@
 <template>
-  <div class="field-item field-item-select"
-       :style="{width: field.final.width || '250px'}">
-    <i-select v-if="choices"
-              class="form-field-select"
-              :clearable="!!field.clearable"
-              :placeholder="field.placeholder"
-              :value="field.value"
-              :default="field.final.default"
-              @input="$emit('input', $event===void 0 ? null : $event)">
-      <template v-for="choice in choices">
-        <option-group v-if="choice.children"
-                      :key="choice.value !== void 0 ? choice.value : choice.key"
-                      :label="choice.text||choice.label">
-          <i-option v-for="subChoice in choice.children"
-                    :key="subChoice.value !== void 0 ? subChoice.value : subChoice.key"
-                    :value="subChoice.value||subChoice.key">{{subChoice.text||subChoice.label}}
-          </i-option>
-        </option-group>
-        <i-option v-else
-                  :key="choice.value||choice.key"
-                  :value="choice.value !== void 0 ? choice.value : choice.key">{{choice.text||choice.label}}
-        </i-option>
-      </template>
-    </i-select>
+  <div class="form-field">
+    <div class="form-field-label">
+      <span class="required" v-if="field.final.required">*</span>
+      {{field.final.label}}
+    </div>
+    <div class="form-field-content"
+         :class="{empty: !field.value, editable: !field.final.disabled&&!field.final.readonly}">
+      <div class="field-item field-item-select"
+           @click="onClick">
+        {{field.displayValue||field.final.placeholder||'请点击选择'}}
+        <!--:rows="field.rows || 5"-->
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-  export default {
-    name: 'FormFieldSelect',
-    props: {
-      field: {
-        type: Object,
-        default: () => {
-        }
-      }
-    },
-    data () {
-      return {
-        choices: null
-      }
-    },
-    async mounted () {
+export default {
+  name: 'FormFieldSelect',
+  props: {
+    field: {
+      type: Object,
+      required: true
+    }
+  },
+  mounted () {
+    const vm = this
+    vm.field.$el = this
+  },
+  methods: {
+    async onClick () {
       const vm = this
-      vm.choices = vm.wrapChoices(await vm.finalize(vm.field.choices))
-      vm.field.$el = this
+      if (vm.field.final.disabled || vm.field.final.readonly) return
+      if (vm.field.onClick) {
+        // 如果 onClick 返回 false 或者 reject，后面的默认行为就不会触发
+        if (await vm.field.onClick(vm.field) === false) return
+      }
+      const value = await vm.pickChoice(
+        `修改${vm.field.label}`,
+        await vm.finalizeSync(vm.field.choices, vm.field.context.item),
+        vm.field.value
+      )
+      vm.$emit('input', value)
     }
   }
+}
 </script>
+
+<style lang="less">
+</style>

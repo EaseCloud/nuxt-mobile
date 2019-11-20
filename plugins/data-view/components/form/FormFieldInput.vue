@@ -8,7 +8,7 @@
          :class="{empty: !field.value, editable: !field.final.disabled&&!field.final.readonly}">
       <div class="field-item field-item-input"
            @click="onClick">
-        {{field.value||field.final.placeholder||'请输入'+field.final.label}}
+        {{field.displayValue||field.final.placeholder||'请点击修改内容'}}
         <!--:rows="field.rows || 5"-->
       </div>
     </div>
@@ -21,8 +21,7 @@ export default {
   props: {
     field: {
       type: Object,
-      default: () => {
-      }
+      required: true
     }
   },
   mounted () {
@@ -33,7 +32,10 @@ export default {
     async onClick () {
       const vm = this
       if (vm.field.final.disabled || vm.field.final.readonly) return
-      if (vm.field.onClick) vm.field.onClick(vm.field)
+      if (vm.field.onClick) {
+        // 如果 onClick 返回 false 或者 reject，后面的默认行为就不会触发
+        if (await vm.field.onClick(vm.field) === false) return
+      }
       const value = await vm.prompt(`修改${vm.field.label}`, vm.field.value)
       vm.$emit('input', value)
     }
@@ -42,13 +44,4 @@ export default {
 </script>
 
 <style lang="less">
-input.form-field-input {
-  border: 0;
-  background: transparent;
-  height: inherit;
-  line-height: inherit;
-  text-align: right;
-  width: 100%;
-  box-sizing: border-box;
-}
 </style>
