@@ -1,4 +1,5 @@
 import NotifierRegistry from './components/NotifierRegistry'
+import MapPicker from './components/MapPicker'
 import { DialogOptions } from './models'
 import store from './store'
 
@@ -128,103 +129,25 @@ export default {
           })
         },
         async pickLocation (title, lng = 0, lat = 0, label = '') {
-          // TODO: 拾取地理位置
+          // 拾取地理位置
           const vm = this
           const currentLocation = await vm.getCurrentLocation()
           const [oldLng, oldLat, oldLabel] = lat && lng ? [lng, lat, label]
             : [currentLocation.lng, currentLocation.lat, currentLocation.label]
           return new Promise(async (resolve, reject) => {
-            let data = { lng: oldLng, lat: oldLat, label: oldLabel }
             const dialog = vm.openDialog(new DialogOptions({
               mode: 'full',
               render (h) {
-                const $marker = h('el-amap-marker', { props: { position: [oldLng, oldLat] } })
-                const $map = h('el-amap', {
-                  props: {
-                    zoom: 14,
-                    center: [oldLng, oldLat],
-                    plugin: [{ pName: 'Scale' }, { pName: 'ToolBar' }, { pName: 'Geolocation' }],
-                    events: {
-                      moveend () {
-                        const map = $map.componentInstance.$$getInstance()
-                        const center = map.getCenter()
-                        const marker = $marker.componentInstance.$$getInstance()
-                        marker.setPosition(center)
-                        data.lng = center.lng
-                        data.lat = center.lat
-                        // 移动之后立即反解位置信息
-                        if (window.AMap.Geocoder) {
-                          const geocoder = new window.AMap.Geocoder({ radius: 1000, extensions: 'all' })
-                          geocoder.getAddress([center.lng, center.lat], function (status, result) {
-                            if (status === 'complete' && result.info === 'OK') {
-                              if (result && result.regeocode) {
-                                // TODO: 将中间的地址信息显示到界面上
-                                // console.log(result.regeocode)
-                                data.adcode = result.regeocode.addressComponent.adcode
-                                data.label = result.regeocode.formattedAddress
-                              }
-                            }
-                          })
-                        }
-                      }
-                    }
-                  }
-                }, [$marker])
-                return h('div', {
-                  style: {
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    bottom: 0,
-                    right: 0
-                  }
-                }, [$map, h('div', {
-                  style: {
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    background: 'white',
-                    borderBottom: '1px solid grey',
-                    padding: vm.px(20),
-                    fontSize: vm.px(28),
-                    lineHeight: vm.px(64)
-                  }
-                }, [h('div'), h('a', {
-                  style: {
-                    float: 'right',
-                    color: 'white',
-                    background: 'grey',
-                    textAlign: 'center',
-                    width: vm.px(100),
-                    marginLeft: vm.px(10),
-                    borderRadius: vm.px(10),
-                  },
+                return h(MapPicker, {
+                  props: { lng: oldLng, lat: oldLat, label: oldLabel },
                   on: {
-                    click () {
+                    input (item) {
                       vm.$store.dispatch('notifier/closeDialog', dialog)
-                      // console.log('reject')
-                      reject()
+                      if (!item) return reject() // 取消
+                      resolve(item)
                     }
                   }
-                }, '取消'), h('a', {
-                  style: {
-                    float: 'right',
-                    color: 'white',
-                    background: 'blue',
-                    textAlign: 'center',
-                    width: vm.px(100),
-                    marginLeft: vm.px(10),
-                    borderRadius: vm.px(10),
-                  },
-                  on: {
-                    click () {
-                      vm.$store.dispatch('notifier/closeDialog', dialog)
-                      // console.log('resolve', data)
-                      resolve(data)
-                    }
-                  }
-                }, '确定')])])
+                })
               }
             }))
           })

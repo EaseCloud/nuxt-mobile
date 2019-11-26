@@ -8,8 +8,8 @@
          :class="{empty: !field.value, editable: !field.final.disabled&&!field.final.readonly}">
       <div class="field-item field-item-select"
            @click="onClick">
-        {{field.displayValue||field.final.placeholder||'请点击选择'}}
-        <!--:rows="field.rows || 5"-->
+        {{field.displayValue||field.final.placeholder||
+        (field.final.disabled||field.final.readonly?'无':'请点击选择')}}
       </div>
     </div>
   </div>

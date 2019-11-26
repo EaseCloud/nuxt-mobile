@@ -5,10 +5,12 @@
       {{field.final.label}}
     </div>
     <div class="form-field-content"
-         :class="{empty: !field.value, editable: !field.final.disabled&&!field.final.readonly}">
-      <div class="field-item field-item-input"
+         :class="{empty: !field.value, editable: !field.inline&&!field.final.disabled&&!field.final.readonly}">
+      <input class="input-inline" :placeholder="field.final.placeholder" v-if="field.inline" />
+      <div v-else class="field-item field-item-input"
            @click="onClick">
-        {{field.displayValue||field.final.placeholder||'请点击修改内容'}}
+        {{field.displayValue||field.final.placeholder||
+        (field.final.disabled||field.final.readonly?'无':'请点击修改内容')}}
         <!--:rows="field.rows || 5"-->
       </div>
     </div>
@@ -49,5 +51,13 @@ export default {
 .field-item-input {
   padding: 20*@px 0;
   line-height: 48*@px;
+}
+.input-inline {
+  border: 0;
+  background: transparent;
+  box-sizing: border-box;
+  width: 100%;
+  height: 88*@px;
+  text-align: right;
 }
 </style>

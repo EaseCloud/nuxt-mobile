@@ -21,6 +21,7 @@ export default {
   name: 'FormFieldMap',
   props: {
     field: {
+      // 注意 object filter 之后的值要满足地址对象的格式：{lng,lat,label,title}
       type: Object,
       required: true,
     }
@@ -34,7 +35,14 @@ export default {
   methods: {
     async onClick () {
       const vm = this
-      vm.$emit('input', await vm.pickLocation())
+      const data = vm.field.displayValue
+      // 要打开原地址
+      vm.$emit('input', await vm.pickLocation(
+        data && data.title,
+        data && data.lng,
+        data && data.lat,
+        data && data.label
+      ))
     }
   }
 }

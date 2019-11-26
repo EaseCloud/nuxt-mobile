@@ -12,7 +12,8 @@
       </div>
     </div>
     <!-- file-picker -->
-    <file-picker v-for="filePicker in $store.state.notifier.file_pickers"
+    <file-picker v-for="(filePicker,i) in $store.state.notifier.file_pickers"
+                 :key="i"
                  :options="filePicker"></file-picker>
   </div>
 </template>
@@ -40,7 +41,7 @@ export default {
     // vm.$store.dispatch('notifier/addNotify', '你好我成了', 3000)
   },
   async destroyed () {
-    console.log('NotifierRegistry Destroyed')
+    // console.log('NotifierRegistry Destroyed')
     // 因为 filePicker 的取消没有回调，因此当路由跳转，注册器销毁的时候
     // 就应该手动销毁所有的 filePicker
     const vm = this

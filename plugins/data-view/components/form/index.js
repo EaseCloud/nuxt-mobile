@@ -1,7 +1,7 @@
 export default {
   FormFieldInput: () => import('./FormFieldInput.vue'),
   FormFieldSelect: () => import('./FormFieldSelect.vue'),
-  // FormFieldCascade: () => import('./FormFieldCascade.vue'),
+  FormFieldCascade: () => import('./FormFieldCascade.vue'),
   // FormFieldColor: () => import('./FormFieldColor.vue'),
   // FormFieldRadio: () => import('./FormFieldRadio.vue'),
   // FormFieldCheckbox: () => import('./FormFieldCheckbox.vue'),
@@ -15,8 +15,8 @@ export default {
   // FormFieldDate: () => import('./FormFieldDate.vue'),
   // FormFieldObject: () => import('./FormFieldObject.vue'),
   // FormFieldMultiObject: () => import('./FormFieldMultiObject.vue'),
-  // FormFieldDistrict: () => import('./FormFieldDistrict.vue'),
+  FormFieldDistrict: () => import('./FormFieldDistrict.vue'),
   // FormFieldListView: () => import('./FormFieldListView.vue'),
-  // FormFieldRender: () => import('./FormFieldRender.vue'),
+  FormFieldRender: () => import('./FormFieldRender.vue'),
   FormFieldMap: () => import('./FormFieldMap.vue')
 }

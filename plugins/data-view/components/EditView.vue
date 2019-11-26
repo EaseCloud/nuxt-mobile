@@ -5,6 +5,7 @@
               :actions="actions"
               :pageActions="pageActions"
               :backUrl="getModelListRoute(model)">
+    <slot name="before"></slot>
     <edit-view-form v-bind="editViewOptions"
                     @loaded="$emit('loaded',$event)"
                     @change="item=$event;$emit('change',$event)"

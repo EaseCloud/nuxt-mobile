@@ -7,7 +7,9 @@
     <div class="form-field-content">
       <div class="field-item field-item-image">
         <img :src="field.displayValue || config.image_placeholder_url" @click.stop="onClick" />
-        <a class="btn-reset" v-if="field.value" @click.stop="reset">&times;</a>
+        <a class="btn-reset"
+           v-if="!field.final.disabled&&!field.final.readonly&&field.value"
+           @click.stop="reset">&times;</a>
       </div>
     </div>
   </div>
@@ -31,6 +33,7 @@ export default {
   methods: {
     async onClick () {
       const vm = this
+      if (vm.field.final.readonly || vm.field.final.disabled) return
       vm.$emit('input', await vm.pickImage())
     },
     async reset () {
