@@ -15,12 +15,11 @@ export default {
   components: { CascaderPickerItem },
   data () {
     const vm = this
-    // console.log(vm.opts)
     return {
       toggleLevel: -1,
       // 固化传入的值
       // values: Array.from({ length: vm.opts.length }, () => 0)
-      values: vm.opts.map((c, i) => vm.value[i] === void 0 ? c.default : vm.value[i])
+      values: vm.opts.map((c, i) => !vm.value || vm.value[i] === void 0 ? c.default : vm.value[i])
     }
   },
   props: {
@@ -41,7 +40,7 @@ export default {
       const vm = this
       await vm.update(
         0,
-        vm.value[0] || vm.opts[0].default ||
+        vm.value && vm.value[0] || vm.opts[0].default ||
         vm.opts[0].choices[0] && vm.opts[0].choices[0].value
       )
     },

@@ -237,6 +237,26 @@ export default {
     }
   },
   /**
+   * 获取当前所在的省市区
+   * @returns {Promise<void>}
+   */
+  async getCurrentDistrict () {
+    const vm = this
+    const Geolocation = await vm.waitFor(window, 'AMap.Geolocation')
+    const geolocation = new Geolocation({
+      enableHighAccuracy: true,//是否使用高精度定位，默认:true
+      timeout: 3000,          //超过10秒后停止定位，默认：无穷大
+      maximumAge: 0,           //定位结果缓存0毫秒，默认：0
+    })
+    return new Promise((resolve, reject) => {
+      geolocation.getCityInfo((status, result) => {
+        if (status !== 'complete') return reject()
+        // console.log(status, result)
+        resolve(result.adcode)
+      })
+    })
+  },
+  /**
    * 获取当前的 GPS 定位坐标
    */
   async getCurrentLocation () {

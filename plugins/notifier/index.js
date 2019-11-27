@@ -1,7 +1,10 @@
-import NotifierRegistry from './components/NotifierRegistry'
-import MapPicker from './components/MapPicker'
-import DatePicker from './components/DatePicker'
+// import NotifierRegistry from './components/NotifierRegistry'
+// import MapPicker from './components/MapPicker'
+// import DatePicker from './components/DatePicker'
+// import CascaderPicker from './components/CascaderPicker'
+// import DistrictPicker from './components/DistrictPicker'
 import { DialogOptions } from './models'
+import components from './components'
 import store from './store'
 
 export default {
@@ -11,9 +14,14 @@ export default {
       options.store.registerModule('notifier', store, { preserveState: !!options.isClient })
     }
     Vue.mixin({
-      components: {
-        NotifierRegistry
-      },
+      components,
+      // components: {
+      //   NotifierRegistry,
+      //   MapPicker,
+      //   DatePicker,
+      //   CascaderPicker,
+      //   DistrictPicker
+      // },
       methods: {
         openDialog (dialog) {
           const vm = this
@@ -139,7 +147,7 @@ export default {
             const dialog = vm.openDialog(new DialogOptions({
               mode: 'full',
               render (h) {
-                return h(MapPicker, {
+                return h('map-picker', {
                   props: { lng: oldLng, lat: oldLat, label: oldLabel },
                   on: {
                     input (item) {
@@ -195,10 +203,10 @@ export default {
             }))
           })
         },
-        async pickDate (title = '选择日期', defaultDate = new Date()) {
+        async pickCascader (title = '选择', opts = null, defaultValue = null) {
           const vm = this
           return new Promise(async (resolve, reject) => {
-            let value = defaultDate
+            let value = defaultValue
             const dialog = vm.openDialog(new DialogOptions({
               title,
               onOk () {
@@ -210,8 +218,35 @@ export default {
                 reject('')
               },
               render (h) {
-                return h(DatePicker, {
-                  props: { value: defaultDate },
+                return h('cascader-picker', {
+                  props: { opts, value },
+                  on: {
+                    input (val) {
+                      value = val
+                    }
+                  }
+                })
+              }
+            }))
+          })
+        },
+        async pickDate (title = '选择日期', defaultValue = new Date()) {
+          const vm = this
+          return new Promise(async (resolve, reject) => {
+            let value = defaultValue
+            const dialog = vm.openDialog(new DialogOptions({
+              title,
+              onOk () {
+                vm.$store.dispatch('notifier/closeDialog', dialog)
+                resolve(value)
+              },
+              onCancel () {
+                vm.$store.dispatch('notifier/closeDialog', dialog)
+                reject('')
+              },
+              render (h) {
+                return h('date-picker', {
+                  props: { value },
                   on: {
                     input (date) {
                       value = date
@@ -221,7 +256,34 @@ export default {
               }
             }))
           })
-        }
+        },
+        async pickDistrict (title = '选择地区', defaultValue = null) {
+          const vm = this
+          return new Promise(async (resolve, reject) => {
+            let value = defaultValue
+            const dialog = vm.openDialog(new DialogOptions({
+              title,
+              onOk () {
+                vm.$store.dispatch('notifier/closeDialog', dialog)
+                resolve(value)
+              },
+              onCancel () {
+                vm.$store.dispatch('notifier/closeDialog', dialog)
+                reject('')
+              },
+              render (h) {
+                return h('district-picker', {
+                  props: { value },
+                  on: {
+                    input (val) {
+                      value = val
+                    }
+                  }
+                })
+              }
+            }))
+          })
+        },
       }
     })
   }

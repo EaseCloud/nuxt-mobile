@@ -1,12 +1,10 @@
 <template>
-  <cascader-picker v-bind="cascaderOptions"
-                   @input="onInput"
-  ></cascader-picker>
-  <!--@input="$emit('input', moment(...$event).format('YYYY-MM-DD'))"></cascader-picker>-->
+  <cascader-picker v-bind="cascaderOptions" @input="onInput"></cascader-picker>
 </template>
 
 <script>
 import CascaderPicker from '@/nuxt-mobile/plugins/notifier/components/CascaderPicker'
+
 
 export default {
   components: { CascaderPicker },
@@ -43,7 +41,6 @@ export default {
             const month = values[1]
             const day = values[2]
             let days = [0, 31, (isLeap ? 29 : 28), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month]
-            // console.log('next', year, month, day, days)
             return {
               choices: Array.from({ length: days }, (v, i) => ({ text: i + 1, value: i + 1 })),
               default: day && Math.min(day, days) || 1
@@ -73,23 +70,4 @@ export default {
 
 <style lang="less" scoped>
 @import "../../../assets/styles/defines";
-
-.page {
-  background: @color-bg-fade;
-  .row-action {
-    margin-top: 2rem;
-    font-size: 32*@px;
-    padding: 0 80*@px;
-    .btn {
-      margin-top: 30*@px;
-      display: block;
-      text-align: center;
-      line-height: @button-primary-height;
-      .rounded-corners(0.2rem);
-      color: @color-grey-darken-3;
-      background: white;
-      border: 1px solid @color-border;
-    }
-  }
-}
 </style>

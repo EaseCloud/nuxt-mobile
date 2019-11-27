@@ -83,7 +83,7 @@ export default {
           vm.finger = { startY: 0, lastY: 0, startTime: 0, lastTime: 0, transformY: 0 };
           index = vm._.findIndex(vm.listData, { value: vm.value })
           if (index === -1) {
-            console.warn('当前初始值不存在，请检查后listData范围！！')
+            // console.warn('当前初始值不存在，请检查后listData范围！！')
             vm.setListTransform()
             vm.getPickValue(0)
           } else {
@@ -235,6 +235,8 @@ export default {
 }
 </script>
 <style lang="less" scoped="">
+@import '../../../assets/styles/defines';
+
 html {
   font-family: 'PingFang SC', 'Helvetica Neue', 'Helvetica', 'STHeitiSC-Light', 'Arial', sans-serif;
   line-height: 1.8;
@@ -312,7 +314,7 @@ html {
       overflow: hidden;
       text-overflow: ellipsis;
       line-height: 34px;
-      font-size: 18px;
+      font-size: 32*@px;
       color: @color-text-main;
       &.hidden {
         visibility: hidden;
