@@ -232,7 +232,7 @@ export default {
         `https://3gimg.qq.com/lightmap/v1/marker/index.html?type=0` +
         `&marker=coord%3A${geo_lat}%2C${geo_lng}%3Btitle%3A${name}%3Baddr%3A${geo_label}` +
         `&key=OB4BZ-D4W3U-B7VVO-4PJWW-6TKDJ-WPB77&referer=myapp`
-      console.log(url)
+      // console.log(url)
       location.href = url
     }
   },

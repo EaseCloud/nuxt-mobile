@@ -1,5 +1,6 @@
 import config from './config'
 import _ from 'lodash'
+import moment from 'moment'
 
 export default {
   computed: {
@@ -13,5 +14,10 @@ export default {
   async mounted () {
     const vm = this
     if (vm.reload instanceof Function) await vm.reload()
+  },
+  methods: {
+    moment () {
+      return moment(...arguments)
+    }
   }
 }

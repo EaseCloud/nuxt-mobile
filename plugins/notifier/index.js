@@ -1,5 +1,6 @@
 import NotifierRegistry from './components/NotifierRegistry'
 import MapPicker from './components/MapPicker'
+import DatePicker from './components/DatePicker'
 import { DialogOptions } from './models'
 import store from './store'
 
@@ -194,6 +195,33 @@ export default {
             }))
           })
         },
+        async pickDate (title = '选择日期', defaultDate = new Date()) {
+          const vm = this
+          return new Promise(async (resolve, reject) => {
+            let value = defaultDate
+            const dialog = vm.openDialog(new DialogOptions({
+              title,
+              onOk () {
+                vm.$store.dispatch('notifier/closeDialog', dialog)
+                resolve(value)
+              },
+              onCancel () {
+                vm.$store.dispatch('notifier/closeDialog', dialog)
+                reject('')
+              },
+              render (h) {
+                return h(DatePicker, {
+                  props: { value: defaultDate },
+                  on: {
+                    input (date) {
+                      value = date
+                    }
+                  }
+                })
+              }
+            }))
+          })
+        }
       }
     })
   }
