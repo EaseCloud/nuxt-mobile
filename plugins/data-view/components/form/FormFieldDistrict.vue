@@ -1,47 +1,50 @@
 <template>
-  <div class="field-item field-item-district">
-    <!-- TODO: 很奇怪的是这个宽度限制居然会导致 cascader 不断反复 emit input 事件。-->
-    <!--:style="{width: field.final.width || '250px'}"-->
-    <cascader :data="data"
-              :change-on-select="!field.isLeaf"
-              :value="[field.value-field.value%10000, field.value-field.value%100, field.value]"
-              @input="$emit('input', $event&&$event.length>0&&$event[$event.length-1])"
-    ></cascader>
-    <!--@input="$emit('input', $event[$event.length-1])"-->
+  <div class="form-field">
+    <div class="form-field-label">
+      <span class="required" v-if="field.final.required">*</span>
+      {{field.final.label}}
+    </div>
+    <div class="form-field-content"
+         :class="{empty: !field.value, editable: !field.final.disabled&&!field.final.readonly}">
+      <div class="field-item field-item-district"
+           @click="onClick">
+        {{field.displayValue&&gb.get(field.displayValue)||field.final.placeholder||
+        (field.final.disabled||field.final.readonly?'无':'点击选择城市')}}
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import areaData from 'china-area-data'
-import _ from 'lodash'
-
-function getDataNode (value, label) {
-  // if (window['__formFieldDataNodeCache']) {
-  //   return window['__formFieldDataNodeCache']
-  // }
-  const node = { value, label }
-  if (areaData[value]) {
-    node.children = _.map(areaData[value], (name, code) => getDataNode(parseInt(code), name))
-  }
-  // window['__formFieldDataNodeCache'] = node
-  return node
-}
-
 export default {
   name: 'FormFieldDistrict',
   props: {
     field: {
       type: Object,
-      default: () => {
-      }
+      required: true
     }
-  },
-  data () {
-    return { data: getDataNode(86, '').children }
   },
   mounted () {
     const vm = this
     vm.field.$el = this
+  },
+  methods: {
+    async onClick () {
+      const vm = this
+      if (vm.field.final.disabled || vm.field.final.readonly) return
+      if (vm.field.onClick) {
+        // 如果 onClick 返回 false 或者 reject，后面的默认行为就不会触发
+        if (await vm.field.onClick(vm.field) === false) return
+      }
+      const value = await vm.pickDistrict(
+        `修改${vm.field.label}`,
+        vm.field.value || await vm.getCurrentDistrict()
+      )
+      vm.$emit('input', value)
+    }
   }
 }
 </script>
+
+<style lang="less">
+</style>
