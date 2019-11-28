@@ -9,111 +9,20 @@
                      @pulling-down="reload()"
                      @pulling-up="loadMore()">
     <div class="view-list" v-if="initialized">
-      <template v-for="(item, i) in items">
-        <render-component :render="rendering.item" :self="$this" :args="item"
-                          v-if="rendering.item"></render-component>
-        <div class="view-item" v-else
-             :style="{'border-left-color': rendering.ribbonColor&&finalizeSync(rendering.ribbonColor, item)}">
-          <div class="item-header">
-            <div class="item-title">
-              <render-component :render="rendering.itemTitle"
-                                :self="$this" :args="item"></render-component>
-            </div>
-            <div class="item-subtitle">
-              <render-component :render="rendering.itemSubtitle"
-                                :self="$this" :args="item"></render-component>
-            </div>
-          </div>
-          <div class="item-body"
-               :class="{'has-thumbnail': !!rendering.thumbnail}">
-            <div class="thumbnail">
-              <render-component :render="rendering.thumbnail"
-                                :self="$this" :args="item"></render-component>
-            </div>
-            <div class="item-field" v-for="field in fields"
-                 v-if="field.display===void 0||finalizeSync(field.display,item)">
-              <div class="item-field-label">{{field.label}}:</div>
-              <div class="item-field-content">
-                <render-component :render="renderCell"
-                                  :self="$this" :args="[field, i]"></render-component>
-              </div>
-            </div>
-            <!--<div class="item-field">仓库编号: {{item.repository_num}}</div>-->
-            <!--<div class="item-field">仓库区域: {{item.repository_zone}}</div>-->
-          </div>
-          <div class="item-footer">
-            <div class="item-info">
-              <render-component :render="rendering.itemInfo"
-                                :self="$this" :args="item"></render-component>
-            </div>
-            <div class="item-actions">
-              <!--<nuxt-link :to="'/main/admin/warehouse_sheet/'+item.id"-->
-              <!--class="btn-action">查看-->
-              <!--</nuxt-link>-->
-              <!-- TODO: 动态的动作重构 -->
-              <a v-for="action in actions"
-                 v-if="action.display===void 0||finalizeSync(action.display,item)"
-                 class="btn-action" :class="{[action.buttonClass||'default']:true}"
-                 @click="action.action.apply($this, [item])">
-                {{action.label}}
-              </a>
-              <a class="btn-action default"
-                 v-if="options.can_edit===void 0||finalizeSync(options.can_edit,item)"
-                 @click="editItem(item)">查看</a>
-              <a class="btn-action error"
-                 v-if="options.can_delete===void 0||finalizeSync(options.can_delete,item)"
-                 @click="deleteItem(item)">删除</a>
-              <!--//       if (vm.options.can_delete === void 0 || vm.finalizeSync(vm.options.can_delete, item)) {-->
-              <!--//         controls.push(h('Poptip', {-->
-              <!--//           props: {-->
-              <!--//             confirm: true,-->
-              <!--//             title: '确认删除这项数据？',-->
-              <!--//             placement: 'left'-->
-              <!--//           },-->
-              <!--//           on: { 'on-ok': () => vm.actionDelete(item).then(() => vm.reload()) }-->
-              <!--//         }, [h(-->
-              <!--//           'Button', {-->
-              <!--//             props: { size: 'small', type: 'dashed' }-->
-              <!--//           }, '删除'-->
-              <!--//         )]))-->
-              <!--//         controls.push(vm._v(' '))-->
-              <!--//       }-->
-            </div>
-          </div>
-        </div>
-      </template>
+      <list-view-item v-for="(item, i) in items" :key="i"
+                      :model="model" :pk="pk"
+                      :item="item" :options="options" :index="i"
+                      :rendering="rendering" :fields="fields"
+                      :hooks="$attrs.hooks"
+                      :actions="actions"
+                      @deleted="itemDeleted"></list-view-item>
     </div>
-    <!--<i-table ref="table"-->
-    <!--v-if="initialized"-->
-    <!--:columns="columns"-->
-    <!--:loading="loading"-->
-    <!--:row-class-name="rowClassNameRaw"-->
-    <!--:size="size"-->
-    <!--:data="data">-->
-    <!--<slot name="footer" slot="footer"></slot>-->
-    <!--</i-table>-->
-    <!--<div class="list-view-table-footer">-->
-    <!--<page v-if="options.show_pager"-->
-    <!--:total="pager.count"-->
-    <!--:current="pager.page"-->
-    <!--:page-size="pager.pageSize"-->
-    <!--:page-size-opts="pageSizeOpts"-->
-    <!--size="small"-->
-    <!--show-sizer-->
-    <!--show-total-->
-    <!--@on-change="pageTo(Number($event))"-->
-    <!--@on-page-size-change="pageSizeTo(Number($event))"></page>-->
-    <!--</div>-->
   </vue-better-scroll>
 </template>
 
 <script>
 // TODO: 动态表头处理
 // TODO: 字段类型(text/label/expand)
-// TODO: 与 batchActions
-
-// TODO: export 导出
-
 // TODO: 渲染函数，需要全面支持 Promise 异步
 import defaults from '../defaults'
 
@@ -208,13 +117,6 @@ export default {
       const vm = this
       return { ...defaults.hooks, ...(vm.$attrs.hooks || {}) }
     },
-    // pageSizeOpts () {
-    //   const vm = this
-    //   const opts = [10, 20, 30, 40]
-    //   if (opts.indexOf(Number(vm.pageSize)) === -1) opts.push(vm.pageSize)
-    //   opts.sort((a, b) => a - b)
-    //   return opts
-    // },
     // selectedItems () {
     //   const vm = this
     //   return vm.selectedIndices.map(i => vm.items[i])
@@ -243,11 +145,8 @@ export default {
       await Promise.all(results.map(async function (item, i) {
         items[i] = await vm.hooks.filter_item_before_render.apply(vm, [item])
       }))
-      // 预渲染
-      const data = await vm.preRenderData(items)
       // 加入列表
       vm.items.splice(vm.items.length, 0, ...items)
-      vm.data.splice(vm.data.length, 0, ...data)
       vm.$nextTick(async () => {
         // 等渲染完毕之后才确定加载完毕，免得过早触发下拉控件
         vm.loading = false
@@ -267,138 +166,6 @@ export default {
       vm.data = []
       await vm.loadMore()
     },
-    /**
-     * 预渲染所有的已获得对象
-     * 即将从 API 获得的原始数据对象 vm.items
-     * 转化成传入到 iView Table 的 props 属性 data 的数据属性 vm.data
-     */
-    async preRenderData (items) {
-      const vm = this
-      const data = []
-      await Promise.all(items.map(async function (item, i) {
-        data[i] = await vm.preRenderDataRow(item)
-      }))
-      return data
-    },
-    /**
-     * 预渲染单个数据行
-     * @param item
-     */
-    async preRenderDataRow (item) {
-      const vm = this
-      const row = {}
-      await Promise.all(vm.fields.map(async function (field, i) {
-        const key = `__column${i}__`
-        const type = await vm.finalize(field.type, vm)
-        // CHECKLIST: <data-view-types> <list-view>
-        if (type === 'label' || type === 'text') {
-          row[key] = await vm.getFieldValue(field, item)
-        } else if (type === 'html') {
-          row[key] = await vm.getFieldValue(field, item)
-        } else if (type === 'image') {
-          row[key] = await vm.getFieldValue(field, item)
-        } else if (type === 'switch') {
-          row[key] = await vm.getFieldValue(field, item)
-        } else if (type === 'link') {
-          row[key] = await vm.getFieldValue(field, item)
-        } else if (type === 'render') {
-          row[key] = item
-        } else {
-          console.warn('尚未定义 ListViewTable 的 preRenderDataRow 字段处理类型：', type)
-          row[key] = await vm.getFieldValue(field, item)
-        }
-      }))
-      return row
-    },
-    // renderHeader (type, column, index, h, field) {
-    //   if (field.renderHeader) return field.renderHeader(h, field)
-    //   const children = []
-    //   // 插入过滤筛选器
-    //   if (field.final.filtering) {
-    //     // TODO: 为何这里会搞成平方复杂度？性能有问题，需要调试优化
-    //     children.push(h(tableComponents.FilteringHeader, { props: { field } }))
-    //   }
-    //   return h(
-    //     tableComponents.TableHeaderField,
-    //     { props: { column, field } },
-    //     children
-    //   )
-    // },
-    /**
-     * 渲染单个单元格
-     */
-    renderCell (h, field, index) {
-      const vm = this
-      const type = field.final.type || 'text'
-      const fieldIndex = vm.fields.indexOf(field)
-      const value = vm.data[index][`__column${fieldIndex}__`]
-      // CHECKLIST: <data-view-types> <list-view>
-      // console.log(`RENDER[${index}]:`, type, value)
-      if (type === 'label' || type === 'text') {
-        return h(tableComponents.TableFieldText, { props: { value, field } })
-      } else if (type === 'html') {
-        return h(tableComponents.TableFieldHtml, { props: { value, field } })
-      } else if (type === 'tag') {
-        // TODO: 尚未实现
-        return h('div', `TODO:${type}`)
-      } else if (type === 'link') {
-        const text = field.text(value)
-        const route = field.route(value)
-        return h('router-link', { props: { to: route } }, text)
-      } else if (type === 'image') {
-        return h(tableComponents.TableFieldImage, { props: { value, field } })
-        // } else if (type === 'image-text') {
-        // TODO: 尚未实现
-        // return h('div', `TODO:${type}`)
-      } else if (type === 'switch') {
-        return h(tableComponents.TableFieldSwitch, {
-          props: { value, field, index, vmTable: vm }
-        })
-        //   // TODO: 尚未实现
-        //   return h('div', `TODO:${type}`)
-        // } else if (type === 'html') {
-        //   // TODO: 尚未实现
-        //   return h('div', `TODO:${type}`)
-        // } else if (type === 'html') {
-        //   // TODO: 尚未实现
-        //   return h('div', `TODO:${type}`)
-      } else if (type === 'render') {
-        return field.render(h, value, field, index)
-      } else {
-        return h(`未定义的字段类型: ${type}`)
-      }
-    },
-    // /**
-    //  * 根据指定的 field 选项以及数据行的对象，渲染出具体的 iView
-    //  * table 列定义对象
-    //  * @param type
-    //  * @param value
-    //  * @param h
-    //  */
-    // renderColumn (field, index) {
-    //   const vm = this
-    //   const type =  vm.finalize(field.type, item) || 'text'
-    //   if (type === 'label' || type === 'text') {
-    //   } else if (type === 'html') {
-    //   } else if (type === 'render') {
-    //   }
-    // },
-    //     setQueryKey(key, value) {
-    //       const vm = this;
-    //       vm.$router.replace({
-    //         query: Object.assign(vm.$route.query, { [key]: value }),
-    //       });
-    //       vm.reload();
-    //     },
-    //     removeQueryKey(key) {
-    //       const vm = this;
-    //       const query = { ...vm.$route.query };
-    //       delete query[key];
-    //       vm.$router.replace({ query });
-    //       vm.reload();
-    //     },
-    //   },
-    // };
     /**
      * 修改当前查询集的查询条件并且刷新数据
      */
@@ -640,21 +407,13 @@ export default {
       // vm.columns = columns
       vm.initialized = true
     },
-    async editItem (item) {
-      const vm = this
-      await (vm.options.edit_inline ? vm.actionInlineEdit(item) : vm.actionEdit(item))
-    },
-    async deleteItem (item) {
-      const vm = this
-      await vm.confirm('确认删除这个对象？')
-      await vm.actionDelete(item)
+    async itemDeleted (item) {
       vm.reload()
       // // 删除的话不刷新，只移除一个元素，免得打断用户体验
       // const pos = vm.items.indexOf(item)
       // console.log(vm.items)
       // if (pos > 1) vm.items.splice(pos, 1)
       // console.log(vm.items)
-
     }
   },
   mounted () {
@@ -672,112 +431,5 @@ export default {
 
 .view-list {
   .clearfix();
-  .view-item {
-    margin: 20*@px;
-    background: white;
-    .rounded-corners(5*@px);
-    .box-shadow(2*@px 3*@px 5*@px rgba(0, 0, 0, 0.2));
-    border-left: 5*@px solid @color-main;
-    .item-header {
-      line-height: 64*@px;
-      font-size: 32*@px;
-      padding: 0 20*@px;
-      border-bottom: 1px solid #F0F0F0;
-      .clearfix();
-      .item-title {
-        display: inline-block;
-      }
-      .item-subtitle {
-        float: right;
-        font-size: 28*@px;
-        color: @color-grey;
-      }
-    }
-    .item-body {
-      padding: 20*@px;
-      position: relative;
-      &.has-thumbnail {
-        min-height: 140*@px;
-        .thumbnail {
-          position: absolute;
-          left: 20*@px;
-          top: 20*@px;
-          width: 140*@px;
-          img {
-            border: 1px solid @color-border;
-            box-sizing: border-box;
-            width: 140*@px;
-            height: 140*@px;
-            object-fit: cover;
-          }
-        }
-        .item-field {
-          margin-left: 180*@px;
-        }
-      }
-      .item-field {
-        font-size: 28*@px;
-        line-height: 44*@px;
-        .clearfix();
-        .item-field-label {
-          float: left;
-          width: 5em;
-        }
-        .item-field-content {
-          margin-left: 5em;
-        }
-      }
-    }
-    .item-footer {
-      line-height: 64*@px;
-      padding: 0 20*@px;
-      border-top: 1px solid #F0F0F0;
-      font-size: 28*@px;
-      .clearfix();
-      .item-info {
-        font-size: 26*@px;
-        color: @color-grey;
-        display: inline-block;
-      }
-      .item-actions {
-        float: right;
-        .btn-action {
-          display: inline-block;
-          font-size: 26*@px;
-          line-height: 44*@px;
-          border: 1px solid @color-border;
-          color: @color-text;
-          .rounded-corners(5*@px);
-          padding: 0 20*@px;
-          margin-left: 10*@px;
-          &.primary {
-            background: @color-primary-background;
-            border-color: @color-primary-background;
-            color: white;
-          }
-          &.info {
-            background: @color-info-background;
-            border-color: @color-info-background;
-            color: white;
-          }
-          &.warning {
-            background: @color-warning-background;
-            border-color: @color-warning-background;
-            color: white;
-          }
-          &.success {
-            background: @color-success-background;
-            border-color: @color-success-background;
-            color: white;
-          }
-          &.error {
-            background: @color-error-background;
-            border-color: @color-error-background;
-            color: white;
-          }
-        }
-      }
-    }
-  }
 }
 </style>

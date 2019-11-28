@@ -4,5 +4,6 @@ export default {
   EmbedForm: () => import('./EmbedForm.vue'),
   ListView: () => import('./ListView.vue'),
   ListViewTable: () => import('./ListViewTable.vue'),
+  ListViewItem: () => import('./ListViewItem.vue'),
   EmptyView: () => import('./EmptyView.vue')
 }

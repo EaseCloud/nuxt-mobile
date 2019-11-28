@@ -5,10 +5,10 @@
       {{field.final.label}}
     </div>
     <div class="form-field-content"
-         :class="{empty: !field.value, editable: !field.final.disabled&&!field.final.readonly}">
+         :class="{empty: !/^\d{6}$/.test(field.value), editable: !field.final.disabled&&!field.final.readonly}">
       <div class="field-item field-item-district"
            @click="onClick">
-        {{field.displayValue&&gb.get(field.displayValue)||field.final.placeholder||
+        {{/^\d{6}$/.test(field.displayValue)&&gb.get(field.displayValue)||field.final.placeholder||
         (field.final.disabled||field.final.readonly?'无':'点击选择城市')}}
       </div>
     </div>
