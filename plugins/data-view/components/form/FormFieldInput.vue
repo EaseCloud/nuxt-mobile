@@ -5,7 +5,7 @@
       {{field.final.label}}
     </div>
     <div class="form-field-content"
-         :class="{empty: !field.value, editable: !field.inline&&!field.final.disabled&&!field.final.readonly}">
+         :class="{empty: !field.displayValue, editable: !field.inline&&!field.final.disabled&&!field.final.readonly}">
       <input class="input-inline" :placeholder="field.final.placeholder" v-if="field.inline" />
       <div v-else class="field-item field-item-input"
            @click="onClick">

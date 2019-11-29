@@ -4,6 +4,9 @@
       v-for="(field, i) in fields"
       v-if="field.final && (field.final.display === void 0 || field.final.display)">
 
+      <div v-if="field.hasGap" class="form-field-gap"></div>
+      <div v-if="field.sectionTitle" class="form-field-section-title">{{field.sectionTitle}} &raquo;</div>
+
       <!-- type: input -->
       <form-field-input v-if="(field.type||'input')==='input'"
                         :field="field"
@@ -390,6 +393,17 @@ export default {
 @px: 100vw / 750;
 
 .embed-form {
+  .form-field-section-title {
+    line-height: 44*@px;
+    margin-top: 10*@px;
+    margin-bottom: 10*@px;
+    font-size: 28*@px;
+    color: @color-grey-darken-2;
+    padding: 0 30*@px;
+  }
+  .form-field-gap {
+    height: 20*@px;
+  }
   .form-field {
     line-height: 88*@px;
     border-top: 1px solid #CCC;

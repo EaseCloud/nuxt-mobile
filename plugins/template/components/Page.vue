@@ -14,10 +14,10 @@
         </div>
       </div>
     </slot>
-    <div class="page-body" :class="{'with-navbar': !!navbar, 'with-actionbar': !!actionbar}">
+    <div class="page-body" :class="{'with-navbar': !!navbar, 'with-actionbar': showActionBar()}">
       <slot></slot>
     </div>
-    <slot name="actionbar">
+    <slot name="actionbar" v-if="showActionBar()">
       <div class="action-bar" v-if="actionbar">
         <div class="info">
           <slot name="actionbar-info"></slot>
@@ -77,6 +77,15 @@ export default {
     actionbar: {
       type: Object,
       default: null
+    }
+  },
+  methods: {
+    showActionBar () {
+      const vm = this
+      if (!vm.actionbar || !vm.actionbar.actions) return false
+      return vm.actionbar.actions.some(action => {
+        return action.display === void 0 || vm.finalizeSync(action.display, vm.context)
+      })
     }
   }
 }

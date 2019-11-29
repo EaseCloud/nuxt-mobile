@@ -1,7 +1,7 @@
 <template>
   <render-component :render="rendering.item" :self="$this" :args="item"
                     v-if="data && rendering.item"></render-component>
-  <div class="view-item" v-else-if="data"
+  <div class="view-item" v-else-if="data" :class="{flat:options.flat}"
        :style="{'border-left-color': rendering.ribbonColor&&finalizeSync(rendering.ribbonColor, item)}">
     <div class="item-header">
       <div class="item-title">
@@ -38,7 +38,7 @@
         <a v-for="action in actions"
            v-if="action.display===void 0||finalizeSync(action.display,item)"
            class="btn-action" :class="{[action.buttonClass||'default']:true}"
-           @click="action.action.apply($this, [item])">
+           @click="action.action.apply($this, [item, index])">
           {{action.label}}
         </a>
         <a class="btn-action default"
@@ -55,8 +55,10 @@
 <script>
 import defaults from '../defaults'
 import tableComponents from './table'
+import fieldSetMixins from './fieldSetMixins'
 
 export default {
+  mixins: [fieldSetMixins],
   data () {
     return {
       data: null
@@ -76,6 +78,7 @@ export default {
         can_create: true,
         can_delete: true,
         can_edit: true,
+        flat: false,
         edit_inline: false,
         embed_list_actions: false,
         show_actions: true,
@@ -105,12 +108,11 @@ export default {
   },
   async mounted () {
     const vm = this
+    await Promise.all(vm.fields.map(async field => vm.setListViewFieldDefault(field)))
+    await vm.finalizeFields()
     await vm.preRenderData()
   },
   methods: {
-    /**
-     * 预渲染单个数据行
-     */
     async preRenderData () {
       const vm = this
       const row = {}
@@ -205,6 +207,12 @@ export default {
   .rounded-corners(5*@px);
   .box-shadow(2*@px 3*@px 5*@px rgba(0, 0, 0, 0.2));
   border-left: 5*@px solid @color-main;
+  &.flat {
+    margin: 0;
+    border-left: 0;
+    border-bottom: 1px solid @color-border;
+    .box-shadow(none);
+  }
   .item-header {
     line-height: 64*@px;
     font-size: 32*@px;

@@ -161,49 +161,48 @@ export default {
             }))
           })
         },
-        async pickChoice (title, choices, default_value = '') {
+        async pickChoice (title, choices, default_value = '',
+                          { multiple, align } = { multiple: false, align: 'center' }) {
           const vm = this
+          let value = default_value
           return new Promise(async (resolve, reject) => {
             const dialog = vm.openDialog(new DialogOptions({
               title,
               mode: 'modal',
-              okText: '',
+              okText: multiple ? '确定' : '',
               cancelText: '取消',
+              onOk () {
+                vm.$store.dispatch('notifier/closeDialog', dialog)
+                resolve(value)
+              },
               onCancel () {
                 vm.$store.dispatch('notifier/closeDialog', dialog)
                 reject('')
               },
               render (h) {
-                return h('ul', {
-                  style: {
-                    position: 'relative',
-                    padding: `${vm.px(30)} 0`,
-                    lineHeight: vm.px(64),
-                    maxHeight: '100vw',
-                    overflow: 'auto'
-                  }
-                }, vm.wrapChoices(choices).map((choice, i) => {
-                  return h('li', {
-                    style: {
-                      lineHeight: vm.px(64),
-                      border: 0,
-                      boxSizing: 'border-box',
-                      color: choice.value === default_value ? '#2196F3' : 'inherit',
-                      padding: `0 ${vm.px(30)}`
-                    },
-                    on: {
-                      click () {
+                return h('choice-picker', {
+                  props: {
+                    choiceList: vm.wrapChoices(choices),
+                    multiple,
+                    value,
+                    align: align || 'center'
+                  },
+                  on: {
+                    input (val) {
+                      if (multiple) {
+                        value = val
+                      } else {
                         vm.$store.dispatch('notifier/closeDialog', dialog)
-                        resolve(choice.value)
+                        resolve(val)
                       }
                     }
-                  }, choice.text)
-                }))
+                  }
+                })
               }
             }))
           })
         },
-        async pickCascader (title = '选择', opts = null, defaultValue = null) {
+        async pickCascader (title, opts, defaultValue = null) {
           const vm = this
           return new Promise(async (resolve, reject) => {
             let value = defaultValue
@@ -260,7 +259,7 @@ export default {
         async pickDistrict (title = '选择地区', defaultValue = null) {
           const vm = this
           return new Promise(async (resolve, reject) => {
-            let value = defaultValue
+            let value = defaultValue || await vm.getCurrentDistrict()
             const dialog = vm.openDialog(new DialogOptions({
               title,
               onOk () {
@@ -283,7 +282,7 @@ export default {
               }
             }))
           })
-        },
+        }
       }
     })
   }

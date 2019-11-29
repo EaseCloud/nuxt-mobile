@@ -1,6 +1,5 @@
 <template>
   <vue-better-scroll class="wrapper"
-                     v-if="initialized"
                      ref="scroll"
                      :scrollbar="{fade:true}"
                      :pullDownRefresh="{threshold:90,stop:40}"
@@ -8,7 +7,7 @@
                      :startY="0"
                      @pulling-down="reload()"
                      @pulling-up="loadMore()">
-    <div class="view-list" v-if="initialized">
+    <div class="view-list">
       <list-view-item v-for="(item, i) in items" :key="i"
                       :model="model" :pk="pk"
                       :item="item" :options="options" :index="i"
@@ -87,8 +86,6 @@ export default {
   data () {
     const vm = this
     return {
-      // 是否已初始化
-      initialized: false,
       // 是否正在加载中
       loading: false,
       // 经过渲染预处理的 iView table 猎头数据
@@ -216,197 +213,6 @@ export default {
     //     vm.$emit('page_size_to', pageSize)
     //   }
     // },
-    /**
-     * 初始化所有的行列配置以适配 iView Table 组件的输入格式
-     * @returns {Promise<void>}
-     */
-    async initialize () {
-      const vm = this
-      // const columns = []
-      await Promise.all(vm.fields.map(async function (field, i) {
-        vm.setListViewFieldDefault(field)
-        // 计算所有字段选项值
-        // const key = `__column${i}__`
-        await vm.finalizeFields(field)
-        // const label = await vm.finalize(field.label, vm)
-        // const type = await vm.finalize(field.type, vm)
-        // columns[i] = {
-        //   title: field.final.label,
-        //   render (h, { row, index }) {
-        //     // 如果 key 为 '@index' 的话，渲染
-        //     let value = row[key]
-        //     if (field.key === '@index') {
-        //       value = index + 1 + vm.pager.pageSize * ((vm.pager.page || 1) - 1)
-        //     }
-        //     return vm.renderCell(field.final.type, value, index, h, field)
-        //   },
-        //   // 渲染列头
-        //   renderHeader (h, { column, index }) {
-        //     return vm.renderHeader(field.final.type, column, index, h, field)
-        //   }
-        // }
-        // // 隐藏列的变通处理
-        // if (field.visible && !field.visible.apply(vm)) {
-        //   columns[i].width = -1;
-        //   columns[i].render = () => null;
-        //   columns[i].renderHeader = () => null;
-        // }
-      }))
-      // TODO: 待改写 actions 的处理
-      // if (vm.options.show_actions === void 0 || vm.options.show_actions) {
-      //   const columnActions = {
-      //     title: '操作',
-      //     width: vm.options.action_column_width,
-      //     fixed: vm.options.action_column_fixed,
-      //     render (h, { row, index }) {
-      //       const controls = []
-      //       const item = vm.items[index]
-      //       // 补丁
-      //       // 很奇怪有时候会出现 item 为空的情况（原因未明），这个时候不渲染按钮
-      //       if (!item) return h('div')
-      //       vm.actions.forEach(action => {
-      //         if ((action.display instanceof Function && !action.display.apply(vm, [item])) ||
-      //           (!action.display && action.display !== void 0)) {
-      //           return
-      //         }
-      //         controls.push(h(
-      //           'i-button', {
-      //             props: {
-      //               size: 'small',
-      //               type: action.buttonType,
-      //               shape: action.buttonShape,
-      //               icon: action.buttonIcon,
-      //               ghost: !!action.ghost
-      //             },
-      //             on: {
-      //               click: () => {
-      //                 const result = action.action.apply(vm, [item])
-      //                 // result.catch && result.catch(_ => _)
-      //               }
-      //             }
-      //           }, action.label
-      //         ))
-      //         // 为避免按钮粘在一起，加一个空格以分开
-      //         controls.push(vm._v(' '))
-      //       })
-      //       if (vm.options.can_edit === void 0 || vm.finalizeSync(vm.options.can_edit, item)) {
-      //         controls.push(h(
-      //           'Button', {
-      //             props: { size: 'small' },
-      //             on: {
-      //               async click () {
-      //                 await (vm.options.edit_inline ? vm.actionInlineEdit(item) : vm.actionEdit(item))
-      //                 vm.reload()
-      //               }
-      //             }
-      //           }, '编辑'
-      //         ))
-      //         controls.push(vm._v(' '))
-      //       }
-      //       if (vm.options.can_delete === void 0 || vm.finalizeSync(vm.options.can_delete, item)) {
-      //         controls.push(h('Poptip', {
-      //           props: {
-      //             confirm: true,
-      //             title: '确认删除这项数据？',
-      //             placement: 'left'
-      //           },
-      //           on: { 'on-ok': () => vm.actionDelete(item).then(() => vm.reload()) }
-      //         }, [h(
-      //           'Button', {
-      //             props: { size: 'small', type: 'dashed' }
-      //           }, '删除'
-      //         )]))
-      //         controls.push(vm._v(' '))
-      //       }
-      //       return h('div', controls)
-      //     }
-      //   }
-      //   // 特殊的操作列渲染声明
-      //   if (vm.options.action_column_render_header) {
-      //     columnActions.renderHeader = vm.options.action_column_render_header
-      //   } else if (vm.options.embed_list_actions) {
-      //     columnActions.renderHeader = function render (h) {
-      //       const result = ['操作']
-      //       if (vm.options.can_create) {
-      //         result.push(' ')
-      //         result.push(h('i-button', {
-      //           props: {
-      //             size: 'small',
-      //             type: 'success',
-      //           },
-      //           on: {
-      //             async click () {
-      //               await (vm.options.edit_inline ? vm.inlineCreate() : vm.redirectCreate())
-      //               vm.reload()
-      //             }
-      //           }
-      //         }, '添加'))
-      //       }
-      //       if (vm.listActions) {
-      //         vm.listActions.forEach(action => {
-      //           if (action.display !== void 0 && !action.display ||
-      //             typeof(action.display) === 'function' && !action.display.apply(vm, [vm])) {
-      //             return
-      //           }
-      //           result.push(' ')
-      //           result.push(h('i-button', {
-      //             props: {
-      //               size: 'small',
-      //               type: action.buttonType,
-      //               on: {
-      //                 click () {
-      //                   action.action.apply(vm)
-      //                 }
-      //               }
-      //             }
-      //           }, action.label))
-      //         })
-      //       }
-      //       return result
-      //     }
-      //   }
-      //   columns.push(columnActions)
-      // }
-      // TODO: 待改写：初始化勾选列
-      // if (vm.options.can_select) {
-      //   columns.unshift({
-      //     key: '__selector__',
-      //     width: vm.options.selector_column_width || 40,
-      //     renderHeader (h, { column, index }) {
-      //       return h('checkbox', {
-      //         props: {
-      //           value: vm.selectedIndices.length > 0 &&
-      //           vm.selectedIndices.length === vm.items.length
-      //         },
-      //         on: {
-      //           input (value) {
-      //             vm.selectedIndices = value ? vm._.range(vm.items.length) : []
-      //             vm.$emit('select', vm.selectedIndices)
-      //           }
-      //         }
-      //       })
-      //     },
-      //     render (h, { column, index, row }) {
-      //       return h('checkbox', {
-      //         props: {
-      //           value: vm.selectedIndices.indexOf(index) > -1
-      //         },
-      //         on: {
-      //           input (value) {
-      //             vm.selectedIndices = (value
-      //                 ? vm._.union(vm.selectedIndices, [index])
-      //                 : vm._.without(vm.selectedIndices, index)
-      //             ).sort((a, b) => a - b)
-      //             vm.$emit('select')
-      //           }
-      //         }
-      //       })
-      //     }
-      //   })
-      // }
-      // vm.columns = columns
-      vm.initialized = true
-    },
     async itemDeleted (item) {
       vm.reload()
       // // 删除的话不刷新，只移除一个元素，免得打断用户体验
@@ -421,7 +227,6 @@ export default {
     vm.fields.forEach(field => {
       field.$view = vm
     })
-    vm.initialize()
   }
 }
 </script>
