@@ -257,10 +257,52 @@ export default {
     })
   },
   /**
+   * 反解地址信息
+   */
+  async decodeAddress (lng, lat) {
+    const vm = this
+    const Geocoder = await vm.waitFor(window, 'AMap.Geocoder')
+    const geocoder = new Geocoder()
+    return new Promise((resolve, reject) => {
+      return geocoder.getAddress([lng, lat], function (status, result) {
+        if (status === 'complete' && result.info === 'OK') {
+          if (result && result.regeocode) {
+            const address = result.regeocode.addressComponent
+            const data = {
+              lng,
+              lat,
+              adcode: address.adcode,
+              province: address.province,
+              city: address.city,
+              label: result.regeocode.formattedAddress
+            }
+            // console.log(data)
+            resolve(data)
+          }
+        } else {
+          reject()
+        }
+      })
+    })
+  },
+  /**
    * 获取当前的 GPS 定位坐标
    */
   async getCurrentLocation () {
     const vm = this
+    if (vm.isWechat() && window.wx) {
+      return new Promise(async (resolve, reject) => {
+        window.wx.getLocation({
+          type: 'gcj02', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
+          success (res) {
+            vm.decodeAddress(res.longitude, res.latitude).then(resolve, () => {
+              // 就算反解不到地址信息也返回坐标
+              resolve({ lng: res.longitude, lat: res.latitude })
+            })
+          }
+        })
+      })
+    }
     const Geolocation = await vm.waitFor(window, 'AMap.Geolocation')
     const geolocation = new Geolocation({
       enableHighAccuracy: true,//是否使用高精度定位，默认:true
@@ -291,25 +333,7 @@ export default {
         // 如果取不到的话，取 localStorage 里面的缓存
         if (process.browser && localStorage.getItem('last_location')) {
           const [lng, lat] = localStorage.getItem('last_location').split(',')
-          const Geocoder = await vm.waitFor(window, 'AMap.Geocoder')
-          const geocoder = new Geocoder()
-          return geocoder.getAddress([lng, lat], function (status, result) {
-            if (status === 'complete' && result.info === 'OK') {
-              if (result && result.regeocode) {
-                const address = result.regeocode.addressComponent
-                const data = {
-                  lng,
-                  lat,
-                  adcode: address.adcode,
-                  province: address.province,
-                  city: address.city,
-                  label: result.regeocode.formattedAddress
-                }
-                // console.log(data)
-                resolve(data)
-              }
-            }
-          })
+          vm.decodeAddress(lng, lat).then(resolve, reject)
         }
         // 以上取不到的时候才返回城市数据
         geolocation.getCityInfo((status, result) => {

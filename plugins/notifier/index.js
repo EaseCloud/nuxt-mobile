@@ -86,7 +86,7 @@ export default {
             }))
           })
         },
-        async prompt (message, default_value, placeholder = '') {
+        async prompt (message, default_value, placeholder = '', rows = 1, htmlType = 'input') {
           const vm = this
           // 苟且实现
           // const value = window.prompt(message, default_value)
@@ -115,23 +115,29 @@ export default {
                     lineHeight: vm.px(64)
                   }
                 }, [
-                  h('input', {
-                    attrs: { type: 'text', value: default_value, placeholder },
+                  h(htmlType === 'textarea' ? 'textarea' : 'input', {
+                    attrs: {
+                      rows: htmlType === 'textarea' && rows ? rows : false,
+                      placeholder,
+                      type: htmlType === 'textarea' ? false : htmlType
+                    },
                     style: {
-                      lineHeight: vm.px(64),
+                      fontSize: vm.px(32),
+                      lineHeight: vm.px(44),
                       border: 0,
                       // borderBottom: '1px solid #CCC',
                       background: 'rgba(0, 0, 0, 0.02)',
                       width: '100%',
                       boxSizing: 'border-box',
-                      padding: `0 ${vm.px(30)}`
+                      padding: `${vm.px(22)} ${vm.px(30)}`,
+                      resize: 'none'
                     },
                     on: {
                       input (e) {
                         value = e.target.value
                       }
                     }
-                  })
+                  }, default_value)
                 ])
               }
             }))

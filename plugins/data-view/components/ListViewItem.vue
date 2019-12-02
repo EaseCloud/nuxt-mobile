@@ -27,10 +27,16 @@
                             :self="$this" :args="[field, index]"></render-component>
         </div>
       </div>
+      <render-component v-if="rendering.itemBody" :render="rendering.itemBody"
+                        :self="$this" :args="item"></render-component>
     </div>
     <div class="item-footer">
       <div class="item-info">
         <render-component :render="rendering.itemInfo"
+                          :self="$this" :args="item"></render-component>
+      </div>
+      <div class="item-status">
+        <render-component :render="rendering.itemStatus"
                           :self="$this" :args="item"></render-component>
       </div>
       <div class="item-actions">
@@ -95,6 +101,8 @@ export default {
         itemTitle: h => h('span', { style: { color: 'red' } }, 'rendering.itemTitle()'),
         itemSubtitle: h => null,
         itemInfo: h => null,
+        itemStatus: h => null,
+        itemBody: h => null,
         // 卡片的左边彩带颜色
         ribbonColor: false
       })
@@ -273,6 +281,12 @@ export default {
       font-size: 26*@px;
       color: @color-grey;
       display: inline-block;
+    }
+    .item-status {
+      font-size: 26*@px;
+      color: @color-grey;
+      display: inline-block;
+      float: right;
     }
     .item-actions {
       float: right;

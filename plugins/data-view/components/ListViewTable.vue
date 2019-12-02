@@ -214,6 +214,7 @@ export default {
     //   }
     // },
     async itemDeleted (item) {
+      const vm = this
       vm.reload()
       // // 删除的话不刷新，只移除一个元素，免得打断用户体验
       // const pos = vm.items.indexOf(item)
