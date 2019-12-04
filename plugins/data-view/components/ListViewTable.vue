@@ -22,6 +22,7 @@
                           :hooks="$attrs.hooks"
                           :actions="actions"
                           @deleted="itemDeleted"></list-view-item>
+          <div class="no-item" v-if="!items||!items.length">查询不到任何数据</div>
         </div>
       </vue-better-scroll>
     </div>
@@ -251,6 +252,7 @@ export default {
   .fill-absolute();
   .filter-bar {
     position: relative;
+    font-size: 30*@px;
     z-index: 1;
     background: white;
     border-bottom: 1px solid @color-border;
@@ -288,6 +290,12 @@ export default {
 
   .view-list {
     .clearfix();
+    .no-item {
+      text-align: center;
+      padding: 1.5rem 0;
+      color: @color-grey;
+      font-size: 32*@px;
+    }
   }
 }
 </style>

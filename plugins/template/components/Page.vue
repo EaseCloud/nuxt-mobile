@@ -83,7 +83,7 @@ export default {
     showActionBar () {
       const vm = this
       if (!vm.actionbar) return false
-      return vm.$slots.actions || vm.actionbar.actions.some(action => {
+      return vm.$slots['actionbar-info'] || vm.$slots.actions || vm.actionbar.actions.some(action => {
         return action.display === void 0 || vm.finalizeSync(action.display, vm.context)
       })
     }
