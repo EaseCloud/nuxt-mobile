@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="list-view-table">
     <div class="filter-bar" v-if="filtering.keyword" slot="filterBar">
       <input class="filter-input" v-model="keyword"
              :placeholder="filtering.keyword.placeholder||'请输入关键词进行查找'" />
@@ -247,40 +247,47 @@ export default {
 <style lang="less" scoped>
 @import "../../../../assets/styles/defines";
 
-.filter-bar {
-  position: relative;
-  z-index: 1;
-  background: white;
-  border-bottom: 1px solid @color-border;
-  padding: 20*@px;
-  .clearfix();
-  .filter-input {
-    height: 64*@px;
-    box-sizing: border-box;
-    border: 1px solid @color-border;
-    .rounded-corners(10*@px);
-    width: 570*@px;
-    float: left;
+.list-view-table {
+  .fill-absolute();
+  .filter-bar {
+    position: relative;
+    z-index: 1;
+    background: white;
+    border-bottom: 1px solid @color-border;
+    padding: 20*@px;
+    .clearfix();
+    .filter-input {
+      height: 64*@px;
+      box-sizing: border-box;
+      border: 1px solid @color-border;
+      .rounded-corners(10*@px);
+      width: 570*@px;
+      float: left;
+    }
+    .btn-search {
+      float: left;
+      display: inline-block;
+      line-height: 64*@px;
+      background: @color-info-background;
+      color: white;
+      .rounded-corners(10*@px);
+      width: 120*@px;
+      margin-left: 20*@px;
+      text-align: center;
+    }
   }
-  .btn-search {
-    float: left;
-    display: inline-block;
-    line-height: 64*@px;
-    background: @color-info-background;
-    color: white;
-    .rounded-corners(10*@px);
-    width: 120*@px;
-    margin-left: 20*@px;
-    text-align: center;
+
+  .list-content {
+    .fill-absolute();
   }
-}
 
-.list-content {
-  position: relative;
-  height: 20rem;
-}
+  .filter-bar + .list-content {
+    top: 104*@px;
+    margin-top: 1px;
+  }
 
-.view-list {
-  .clearfix();
+  .view-list {
+    .clearfix();
+  }
 }
 </style>
