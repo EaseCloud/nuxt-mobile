@@ -359,5 +359,22 @@ export default {
     formData.append('image', file)
     const resp = await vm.api('image').post(formData)
     return resp.data
+  },
+  /**
+   * 返回两个经纬度坐标地球上的直线距离（近似计算，距离太远(>500km)会有较大误差）
+   * @param lng1 第一个点的经度
+   * @param lat1 第一个点的纬度
+   * @param lng2 第二个点的经度
+   * @param lat2 第二个点的纬度
+   */
+  earthDistance (lng1, lat1, lng2, lat2) {
+    const r = 6371 // 地球半径
+    // 近似计算距离
+    // 一个纬度多少千米
+    const kmPerLng = Math.PI * r / 180
+    // 一个经度多少千米
+    const kmPerLat = Math.PI * (Math.cos((lng1 + lng2) / 360) * r) / 180
+    // 于是勾股定理直接近似为球面距离
+    return Math.hypot(kmPerLng * (lng2 - lng1), kmPerLat * (lat2 - lat1))
   }
 }

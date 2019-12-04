@@ -1,22 +1,31 @@
 <template>
-  <vue-better-scroll class="wrapper"
-                     ref="scroll"
-                     :scrollbar="{fade:true}"
-                     :pullDownRefresh="{threshold:90,stop:40}"
-                     :pullUpLoad="{threshold:90,txt:{more:'加载更多',noMore:'没有更多数据了'}}"
-                     :startY="0"
-                     @pulling-down="reload()"
-                     @pulling-up="loadMore()">
-    <div class="view-list">
-      <list-view-item v-for="(item, i) in items" :key="i"
-                      :model="model" :pk="pk"
-                      :item="item" :options="options" :index="i"
-                      :rendering="rendering" :fields="fields"
-                      :hooks="$attrs.hooks"
-                      :actions="actions"
-                      @deleted="itemDeleted"></list-view-item>
+  <div>
+    <div class="filter-bar" v-if="filtering.keyword" slot="filterBar">
+      <input class="filter-input" v-model="keyword"
+             :placeholder="filtering.keyword.placeholder||'请输入关键词进行查找'" />
+      <a class="btn-search" @click="doQuery(filtering.keyword.query(keyword))">搜索</a>
     </div>
-  </vue-better-scroll>
+    <div class="list-content">
+      <vue-better-scroll class="wrapper"
+                         ref="scroll"
+                         :scrollbar="{fade:true}"
+                         :pullDownRefresh="{threshold:90,stop:40}"
+                         :pullUpLoad="{threshold:90,txt:{more:'加载更多',noMore:'没有更多数据了'}}"
+                         :startY="0"
+                         @pulling-down="reload()"
+                         @pulling-up="loadMore()">
+        <div class="view-list">
+          <list-view-item v-for="(item, i) in items" :key="i"
+                          :model="model" :pk="pk"
+                          :item="item" :options="options" :index="i"
+                          :rendering="rendering" :fields="fields"
+                          :hooks="$attrs.hooks"
+                          :actions="actions"
+                          @deleted="itemDeleted"></list-view-item>
+        </div>
+      </vue-better-scroll>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -42,6 +51,7 @@ export default {
     actions: { type: Array, default: () => [] },
     // 页面级操作按钮
     listActions: { type: Array, default: () => [] },
+    filtering: { default: () => ({ keyword: false }) },
     options: {
       type: Object,
       default: () => ({
@@ -96,6 +106,8 @@ export default {
       items: [],
       // 选中的项目列表，主键 pk 的列表
       selectedIndices: [],
+      // 搜索关键词
+      keyword: '',
       // 固化查询条件
       query: { ...vm.filters, ...vm.initQuery },
       // 固化分页条件
@@ -234,6 +246,39 @@ export default {
 
 <style lang="less" scoped>
 @import "../../../../assets/styles/defines";
+
+.filter-bar {
+  position: relative;
+  z-index: 1;
+  background: white;
+  border-bottom: 1px solid @color-border;
+  padding: 20*@px;
+  .clearfix();
+  .filter-input {
+    height: 64*@px;
+    box-sizing: border-box;
+    border: 1px solid @color-border;
+    .rounded-corners(10*@px);
+    width: 570*@px;
+    float: left;
+  }
+  .btn-search {
+    float: left;
+    display: inline-block;
+    line-height: 64*@px;
+    background: @color-info-background;
+    color: white;
+    .rounded-corners(10*@px);
+    width: 120*@px;
+    margin-left: 20*@px;
+    text-align: center;
+  }
+}
+
+.list-content {
+  position: relative;
+  height: 20rem;
+}
 
 .view-list {
   .clearfix();
