@@ -4,6 +4,9 @@
     <template slot="actions">
       <slot name="actions"></slot>
     </template>
+    <template v-slot:actionbar-info>
+      <slot name="actionbar-info"></slot>
+    </template>
   </page>
 </template>
 

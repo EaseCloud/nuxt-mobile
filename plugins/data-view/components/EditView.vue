@@ -21,6 +21,9 @@
          (options.can_delete===void 0||finalizeSync(options.can_delete,item))"
          @click="remove()">删除</a>
     </template>
+    <template v-slot:actionbar-info>
+      <slot name="actionbar-info"></slot>
+    </template>
     <slot></slot>
   </empty-view>
 </template>

@@ -5,7 +5,7 @@
              :placeholder="filtering.keyword.placeholder||'请输入关键词进行查找'" />
       <a class="btn-search" @click="doQuery(filtering.keyword.query(keyword))">搜索</a>
     </div>
-    <div class="list-content">
+    <div class="list-content" v-if="ready">
       <vue-better-scroll class="wrapper"
                          ref="scroll"
                          :scrollbar="{fade:true}"
@@ -16,7 +16,7 @@
                          @pulling-up="loadMore()">
         <div class="view-list">
           <list-view-item v-for="(item, i) in items" :key="i"
-                          :model="model" :pk="pk"
+                          :model="model" :pk="pk" :items="items"
                           :item="item" :options="options" :index="i"
                           :rendering="rendering" :fields="fields"
                           :hooks="$attrs.hooks"
@@ -97,6 +97,7 @@ export default {
   data () {
     const vm = this
     return {
+      ready: false,
       // 是否正在加载中
       loading: false,
       // 经过渲染预处理的 iView table 猎头数据
@@ -174,6 +175,9 @@ export default {
       vm.pager.page = 1
       vm.items = []
       vm.data = []
+      // vue-better-scroll 会引用 window 对象，因此要等到 broswer 阶段防止优化
+      await vm.waitFor(process, 'browser')
+      vm.ready = true
       await vm.loadMore()
     },
     /**
@@ -236,7 +240,7 @@ export default {
       // console.log(vm.items)
     }
   },
-  mounted () {
+  async mounted () {
     const vm = this
     vm.fields.forEach(field => {
       field.$view = vm

@@ -18,13 +18,14 @@
       <slot></slot>
     </div>
     <slot name="actionbar">
-      <div class="action-bar" v-if="actionbar" v-show="showActionBar()">
+      <div class="action-bar" v-show="showActionBar()">
         <div class="info">
           <slot name="actionbar-info"></slot>
         </div>
         <div class="actions">
-          <template v-for="action in actionbar.actions">
+          <template v-if="actionbar&&actionbar.actions">
             <a class="action-item" :class="{[action.buttonClass||'default']: true}"
+               v-for="action in actionbar.actions"
                v-if="action.display===void 0||finalizeSync(action.display,context)"
                @click="doAction(action.action, [context])">{{action.label}}</a>
           </template>
@@ -80,12 +81,14 @@ export default {
     }
   },
   methods: {
+    reload () {
+    },
     showActionBar () {
       const vm = this
-      if (!vm.actionbar) return false
-      return vm.$slots['actionbar-info'] || vm.$slots.actions || vm.actionbar.actions.some(action => {
-        return action.display === void 0 || vm.finalizeSync(action.display, vm.context)
-      })
+      return !!vm.$slots['actionbar-info'] || !!vm.$slots.actions ||
+        vm.actionbar && vm.actionbar.actions.some(action => {
+          return action.display === void 0 || vm.finalizeSync(action.display, vm.context)
+        })
     }
   }
 }

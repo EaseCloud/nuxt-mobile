@@ -1,5 +1,5 @@
 <template>
-  <render-component :render="rendering.item" :self="$this" :args="item"
+  <render-component :render="rendering.item" :self="$this" :args="[item,index,items]"
                     v-if="data && rendering.item"></render-component>
   <div class="view-item" v-else-if="data" :class="{flat:options.flat}"
        :style="{'border-left-color': rendering.ribbonColor&&finalizeSync(rendering.ribbonColor, item)}">
@@ -75,6 +75,7 @@ export default {
     model: { type: String, default: '' },
     pk: { type: String, default: 'id' },
     index: { type: Number, default: -1 },
+    items: { type: Array, default: null },
     fields: { type: Array, required: true },
     actions: { type: Array, default: () => [] },
     options: {

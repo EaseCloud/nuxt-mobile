@@ -34,7 +34,7 @@ export default {
     async onClick () {
       const vm = this
       if (vm.field.final.readonly || vm.field.final.disabled) return
-      vm.$emit('input', await vm.pickImage())
+      vm.$emit('input', await vm.pickImage(vm.field.source))
     },
     async reset () {
       const vm = this

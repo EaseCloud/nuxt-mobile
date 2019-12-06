@@ -39,7 +39,9 @@ export default {
       const value = await vm.pickChoice(
         `修改${vm.field.label}`,
         await vm.finalizeSync(vm.field.choices, vm.field.context.item),
-        vm.field.value
+        vm.field.choiceValueFilter ?
+          await vm.finalizeSync(vm.field.choiceValueFilter, vm.field.context.item) : vm.field.value,
+        { multiple: vm.field.multiple, align: vm.field.align || 'center' }
       )
       vm.$emit('input', value)
     }
@@ -48,4 +50,10 @@ export default {
 </script>
 
 <style lang="less">
+@import "../../../../assets/styles/defines";
+
+.field-item-select {
+  padding: 20*@px 0;
+  line-height: 48*@px;
+}
 </style>

@@ -182,14 +182,36 @@ export default {
   },
   async getWxJssdk () {
     const vm = this
+    await vm.waitFor(process, 'browser')
+    // 环境判断
+    if (!vm.isWechat()) {
+      vm.notify('非微信环境无法调起JSSDK')
+      return Promise.reject()
+    }
+    if (!window.wx) {
+      // 先清理旧的脚本
+      let script = document.getElementById('wxjssdk')
+      // if (script) script.parentElement.removeChild(script)
+      // delete window.wx
+      // vm.notify('微信JSSDK清理成功')
+      // 再插入新的脚本
+      script = document.createElement('script')
+      script.id = 'wxjssdk'
+      // script.src = `${vm.config.wx_api_root}/wx_jssdk_script/${vm.config.wx_appid_biz}/?version=1.4.0&debug=1`
+      script.src = `${vm.config.wx_api_root}/wx_jssdk_script/${vm.config.wx_appid_biz}/?version=1.4.0`
+      document.head.appendChild(script)
+    }
+    const wx = await vm.waitFor(window, 'wx')
+    // vm.notify('微信JSSDK重新加载成功')
+    if (window.wxJssdkReady) return wx
+    // vm.notify('browserReady')
     return new Promise((resolve, reject) => {
-      if (!vm.isWechat() || !window.wx) {
-        return reject()
-      }
-      window.wx.ready(() => {
-        // alert('微信环境加载成功');
-        resolve(window.wx)
+      wx.ready(() => {
+        // vm.notify('微信环境初始化就绪');
+        window.wxJssdkReady = true
+        resolve(wx)
       }, () => {
+        // vm.notify('微信环境加载失败');
         reject()
       })
     })
@@ -197,13 +219,24 @@ export default {
   async wxScan (desc = '') {
     const vm = this
     const wx = await vm.getWxJssdk()
+    // vm.notify(wx.toString())
     return new Promise((resolve, reject) => {
+      // vm.notify(wx.scanQRCode.toString())
       wx.scanQRCode({
         desc,
         needResult: 1, // 默认为0，扫描结果由微信处理，1则直接返回扫描结果，
         // scanType: ['qrCode'], // 可以指定扫二维码还是一维码，默认二者都有
         async success (res) {
           resolve(res.resultStr);
+        },
+        async fail (res) {
+          vm.notify(res)
+          reject()
+        },
+        async cancel (res) {
+          vm.notify('用户取消操作')
+          // vm.notify(res)
+          reject()
         }
       })
     })
@@ -355,8 +388,29 @@ export default {
   },
   async django_upload_image (file) {
     const vm = this
+    // vm.notify(file.toString().substr(0, 40))
+    let blob = file
     const formData = new FormData()
-    formData.append('image', file)
+    // 支持 base64 字符串传入，转换为 blob
+    if (typeof file === 'string') {
+      const str = file.substr(0, 10) === 'data:image' ? file.split(',')[1] : file
+      const byteString = atob(str)
+      const ab = new ArrayBuffer(byteString.length);
+      const ia = new Uint8Array(ab);
+      for (let i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+      }
+      blob = new Blob([ab]);
+      const ext = { GIF: '.gif' }[byteString.substr(0, 3)] || '.png'
+      // console.log('str', str)
+      // console.log('bs', byteString)
+      // console.log('ab', ab)
+      // console.log('ia', ia)
+      // console.log('blob', blob)
+      formData.append('image', blob, 'blob' + ext)
+    } else {
+      formData.append('image', blob)
+    }
     const resp = await vm.api('image').post(formData)
     return resp.data
   },

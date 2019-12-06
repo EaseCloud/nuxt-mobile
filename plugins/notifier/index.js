@@ -51,9 +51,51 @@ export default {
             vm.$store.dispatch('notifier/pickFile', filePicker)
           })
         },
-        async pickImage () {
+        async pickImage (source = 'all', multiple = false) {
           const vm = this
-          return vm.pickFile('image/*')
+          if (vm.isWechat()) {
+            const wx = await vm.getWxJssdk()
+            return new Promise((resolve, reject) => {
+              wx.chooseImage({
+                count: 1,
+                sourceType: source === 'all' ? ['album', 'camera'] : [source],
+                async success (res) {
+                  const localIds = res.localIds;
+                  const data = []
+                  await Promise.all(res.localIds.map((localId, i) => new Promise((rs, rj) => {
+                    wx.getLocalImgData({
+                      localId,
+                      success (res) {
+                        data[i] = res.localData
+                        rs()
+                      },
+                      async fail (res) {
+                        vm.notify(res)
+                        rj()
+                      },
+                      async cancel (res) {
+                        vm.notify('用户取消操作')
+                        // vm.notify(res)
+                        rj()
+                      }
+                    })
+                  })))
+                  resolve(multiple ? data : data[0])
+                },
+                async fail (res) {
+                  vm.notify(res)
+                  reject()
+                },
+                async cancel (res) {
+                  vm.notify('用户取消操作')
+                  // vm.notify(res)
+                  reject()
+                }
+              })
+            })
+          } else {
+            return vm.pickFile('image/*', multiple)
+          }
         },
         async confirm (message, title = '操作确认') {
           const vm = this
