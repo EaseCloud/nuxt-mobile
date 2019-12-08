@@ -97,6 +97,15 @@ export default {
             return vm.pickFile('image/*', multiple)
           }
         },
+        async previewImage (image) {
+          const vm = this
+          return vm.previewImages([image], image)
+        },
+        async previewImages (images, current = '') {
+          const vm = this
+          const wx = await vm.getWxJssdk()
+          wx.previewImage({ current, urls: images })
+        },
         async confirm (message, title = '操作确认') {
           const vm = this
           // 苟且实现

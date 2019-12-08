@@ -34,7 +34,12 @@ export default {
     async onClick () {
       const vm = this
       if (vm.field.final.readonly || vm.field.final.disabled) return
-      vm.$emit('input', await vm.pickImage(vm.field.source))
+      const action = await vm.pickChoice('图片操作', { preview: '预览图片', select: '选择图片' })
+      if (action === 'preview') {
+        await vm.previewImage(vm.field.displayValue)
+      } else {
+        vm.$emit('input', await vm.pickImage(vm.field.source))
+      }
     },
     async reset () {
       const vm = this

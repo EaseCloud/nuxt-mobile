@@ -119,7 +119,6 @@ export default {
    */
   async action_list_view_load_data () {
     const vm = this
-    console.log(vm.model)
     const resp = await vm.api(vm.model).get({}, {
       page: vm.pager.page,
       page_size: vm.pager.page_size,
