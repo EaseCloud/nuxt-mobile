@@ -4,7 +4,7 @@
               :context="item"
               :actions="actions"
               :pageActions="pageActions"
-              :backUrl="getModelListRoute(model)">
+              :backUrl="options.back_url||getModelListRoute(model)">
     <slot name="before"></slot>
     <edit-view-form v-bind="editViewOptions"
                     @loaded="$emit('loaded',$event)"

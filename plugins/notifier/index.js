@@ -106,7 +106,7 @@ export default {
           const wx = await vm.getWxJssdk()
           wx.previewImage({ current, urls: images })
         },
-        async confirm (message, title = '操作确认') {
+        async confirm (message, title = '操作确认', options = {}) {
           const vm = this
           // 苟且实现
           // return window.confirm(message) ? Promise.resolve() : Promise.reject()
@@ -115,11 +115,11 @@ export default {
             const dialog = vm.openDialog(new DialogOptions({
               title,
               mode: 'modal',
-              okText: '确定',
-              cancelText: '取消',
+              okText: options.okText || '确定',
+              cancelText: options.cancelText || '取消',
               onOk () {
                 vm.$store.dispatch('notifier/closeDialog', dialog)
-                resolve()
+                resolve(true)
               },
               onCancel () {
                 vm.$store.dispatch('notifier/closeDialog', dialog)
@@ -138,6 +138,7 @@ export default {
           })
         },
         async prompt (message, default_value, placeholder = '', rows = 1, htmlType = 'input') {
+          // console.log(message, default_value, placeholder, rows, htmlType)
           const vm = this
           // 苟且实现
           // const value = window.prompt(message, default_value)
@@ -159,37 +160,42 @@ export default {
                 reject('')
               },
               render (h) {
+                const $elInput = h(htmlType === 'textarea' ? 'textarea' : 'input', {
+                  attrs: {
+                    rows: htmlType === 'textarea' && rows ? rows : false,
+                    placeholder,
+                    type: htmlType === 'textarea' ? false : htmlType,
+                    // value: default_value
+                  },
+                  style: {
+                    fontSize: vm.px(32),
+                    lineHeight: vm.px(44),
+                    border: 0,
+                    // borderBottom: '1px solid #CCC',
+                    background: 'rgba(0, 0, 0, 0.02)',
+                    width: '100%',
+                    boxSizing: 'border-box',
+                    padding: `${vm.px(22)} ${vm.px(30)}`,
+                    resize: 'none'
+                  },
+                  on: {
+                    input (e) {
+                      value = e.target.value
+                    }
+                  }
+                }, [])
+                vm.$nextTick(() => {
+                  console.log($elInput)
+                  $elInput.elm.focus()
+                  $elInput.elm.value = default_value
+                })
                 return h('div', {
                   style: {
                     position: 'relative',
                     padding: vm.px(30),
                     lineHeight: vm.px(64)
                   }
-                }, [
-                  h(htmlType === 'textarea' ? 'textarea' : 'input', {
-                    attrs: {
-                      rows: htmlType === 'textarea' && rows ? rows : false,
-                      placeholder,
-                      type: htmlType === 'textarea' ? false : htmlType
-                    },
-                    style: {
-                      fontSize: vm.px(32),
-                      lineHeight: vm.px(44),
-                      border: 0,
-                      // borderBottom: '1px solid #CCC',
-                      background: 'rgba(0, 0, 0, 0.02)',
-                      width: '100%',
-                      boxSizing: 'border-box',
-                      padding: `${vm.px(22)} ${vm.px(30)}`,
-                      resize: 'none'
-                    },
-                    on: {
-                      input (e) {
-                        value = e.target.value
-                      }
-                    }
-                  }, default_value)
-                ])
+                }, [$elInput])
               }
             }))
           })

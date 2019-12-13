@@ -34,7 +34,8 @@ export default {
     async onClick () {
       const vm = this
       if (vm.field.final.readonly || vm.field.final.disabled) return
-      const action = await vm.pickChoice('图片操作', { preview: '预览图片', select: '选择图片' })
+      const action = vm.field.displayValue ?
+        await vm.pickChoice('图片操作', { preview: '预览图片', select: '选择图片' }) : 'select'
       if (action === 'preview') {
         await vm.previewImage(vm.field.displayValue)
       } else {
