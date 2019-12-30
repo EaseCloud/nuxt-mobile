@@ -417,8 +417,14 @@ export default {
       float: left;
       padding-left: 30*@px;
       width: 160*@px;
+      position: relative;
       .required {
         color: red;
+        display: block;
+        position: absolute;
+        width: 25*@px;
+        text-align: center;
+        margin-left: -25*@px;
       }
     }
     .form-field-content {

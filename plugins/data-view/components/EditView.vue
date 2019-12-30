@@ -93,7 +93,7 @@ export default {
     },
     async remove () {
       const vm = this
-      await vm.confirm('确认删除？')
+      await vm.confirm(vm.options.message_remove || '确认删除？')
       await vm.$refs.form.deleteItem()
       await vm.hooks.action_after_delete.apply(vm, [vm.item])
       // vm.closeCurrentPage()

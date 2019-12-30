@@ -104,7 +104,24 @@ export default {
         async previewImages (images, current = '') {
           const vm = this
           const wx = await vm.getWxJssdk()
-          wx.previewImage({ current, urls: images })
+          return new Promise((resolve, reject) => {
+            wx.previewImage({
+              current,
+              urls: images,
+              async success () {
+                resolve()
+              },
+              async fail (res) {
+                vm.notify(res)
+                reject()
+              },
+              async cancel (res) {
+                vm.notify('用户取消操作')
+                // vm.notify(res)
+                reject()
+              }
+            })
+          })
         },
         async confirm (message, title = '操作确认', options = {}) {
           const vm = this
@@ -137,7 +154,7 @@ export default {
             }))
           })
         },
-        async prompt (message, default_value, placeholder = '', rows = 1, htmlType = 'input') {
+        async prompt (message, default_value = '', placeholder = '', rows = 1, htmlType = 'input') {
           // console.log(message, default_value, placeholder, rows, htmlType)
           const vm = this
           // 苟且实现
@@ -185,7 +202,6 @@ export default {
                   }
                 }, [])
                 vm.$nextTick(() => {
-                  console.log($elInput)
                   $elInput.elm.focus()
                   $elInput.elm.value = default_value
                 })

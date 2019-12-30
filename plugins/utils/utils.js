@@ -327,20 +327,29 @@ export default {
       return new Promise(async (resolve, reject) => {
         window.wx.getLocation({
           type: 'gcj02', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
-          success (res) {
+          async success (res) {
             vm.decodeAddress(res.longitude, res.latitude).then(resolve, () => {
               // 就算反解不到地址信息也返回坐标
               resolve({ lng: res.longitude, lat: res.latitude })
             })
+          },
+          async fail (res) {
+            vm.notify(res)
+            reject()
+          },
+          async cancel (res) {
+            vm.notify('用户取消操作')
+            // vm.notify(res)
+            reject()
           }
         })
       })
     }
     const Geolocation = await vm.waitFor(window, 'AMap.Geolocation')
     const geolocation = new Geolocation({
-      enableHighAccuracy: true,//是否使用高精度定位，默认:true
+      enableHighAccuracy: false,//是否使用高精度定位，默认:true
       timeout: 3000,          //超过10秒后停止定位，默认：无穷大
-      maximumAge: 0,           //定位结果缓存0毫秒，默认：0
+      maximumAge: 3600000,           //定位结果缓存0毫秒，默认：0
       convert: true,           //自动偏移坐标，偏移后的坐标为高德坐标，默认：true
       // showButton: true,        //显示定位按钮，默认：true
       // buttonPosition: 'LB',    //定位按钮停靠位置，默认：'LB'，左下角
@@ -389,6 +398,7 @@ export default {
   async django_upload_image (file) {
     const vm = this
     // vm.notify(file.toString().substr(0, 40))
+    if (!file) return null
     let blob = file
     const formData = new FormData()
     // 支持 base64 字符串传入，转换为 blob

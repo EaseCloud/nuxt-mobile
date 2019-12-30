@@ -9,7 +9,7 @@
       <input class="input-inline" :placeholder="field.final.placeholder" v-if="field.inline" />
       <div v-else class="field-item field-item-input"
            @click="onClick">{{field.displayValue||field.displayValue===0&&'0'||field.final.placeholder||
-        (field.final.disabled||field.final.readonly?'无':'请点击修改内容')}}</div>
+        (field.final.disabled||field.final.readonly?'无':'点击输入')}}</div>
     </div>
   </div>
 </template>
@@ -35,7 +35,7 @@ export default {
         // 如果 onClick 返回 false 或者 reject，后面的默认行为就不会触发
         if (await vm.field.onClick(vm.field) === false) return
       }
-      const value = await vm.prompt(`修改${vm.field.label}`,
+      const value = await vm.prompt(`输入${vm.field.label}`,
         vm.field.value, vm.field.final.placeholder, vm.field.rows, vm.field.htmlType)
       vm.$emit('input', value)
     }

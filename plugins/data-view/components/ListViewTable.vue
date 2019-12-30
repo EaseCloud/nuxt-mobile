@@ -1,5 +1,5 @@
 <template>
-  <div class="list-view-table">
+  <div class="list-view-table" :class="options.css_class">
     <div class="filter-bar" v-if="filtering.keyword" slot="filterBar">
       <input class="filter-input" v-model="keyword"
              :placeholder="filtering.keyword.placeholder||'请输入关键词进行查找'" />

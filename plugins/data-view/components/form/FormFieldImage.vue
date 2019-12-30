@@ -6,7 +6,9 @@
     </div>
     <div class="form-field-content">
       <div class="field-item field-item-image">
-        <img :src="field.displayValue || config.image_placeholder_url" @click.stop="onClick" />
+        <img :src="field.displayValue ||
+        (field.final.readonly||field.final.disabled?config.image_placeholder_url
+        :require('@/nuxt-mobile/assets/images/icon-camera.png'))" @click.stop="onClick" />
         <a class="btn-reset"
            v-if="!field.final.disabled&&!field.final.readonly&&field.value"
            @click.stop="reset">&times;</a>
@@ -33,7 +35,9 @@ export default {
   methods: {
     async onClick () {
       const vm = this
-      if (vm.field.final.readonly || vm.field.final.disabled) return
+      if (vm.field.final.readonly || vm.field.final.disabled) {
+         return vm.field.displayValue ? vm.previewImage(vm.field.displayValue) : null
+      }
       const action = vm.field.displayValue ?
         await vm.pickChoice('图片操作', { preview: '预览图片', select: '选择图片' }) : 'select'
       if (action === 'preview') {
@@ -64,8 +68,8 @@ export default {
       object-fit: cover;
       display: block;
       float: right;
-      border: 1px solid @color-border;
-      background: @color-bg-fade;
+      //border: 1px solid @color-border;
+      //background: @color-bg-fade;
     }
     .btn-reset {
       position: absolute;
