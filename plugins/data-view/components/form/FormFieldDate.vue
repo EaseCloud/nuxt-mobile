@@ -5,7 +5,7 @@
       {{field.final.label}}
     </div>
     <div class="form-field-content"
-         :class="{empty: !field.value, editable: !field.final.disabled&&!field.final.readonly}">
+         :class="{empty: !field.value, editable: !isReadonly()}">
       <div class="field-item field-item-date"
            @click="onClick">
         {{field.displayValue||field.final.placeholder||
@@ -16,32 +16,17 @@
 </template>
 
 <script>
+import FormFieldBase from './FormFieldBase'
+
 export default {
+  extends: FormFieldBase,
   name: 'FormFieldDate',
-  props: {
-    field: {
-      type: Object,
-      required: true
-    }
-  },
-  mounted () {
-    const vm = this
-    vm.field.$el = this
-  },
   methods: {
-    async onClick () {
+    async inputValue () {
       const vm = this
-      if (vm.field.final.disabled || vm.field.final.readonly) return
-      if (vm.field.onClick) {
-        // 如果 onClick 返回 false 或者 reject，后面的默认行为就不会触发
-        if (await vm.field.onClick(vm.field) === false) return
-      }
-      const value = await vm.pickDate(`修改${vm.field.label}`, vm.field.value || vm.moment().format('YYYY-MM-DD'))
-      vm.$emit('input', value)
+      return vm.pickDate(`修改${vm.field.label}`, vm.field.value || vm.moment().format('YYYY-MM-DD'))
     }
   }
 }
 </script>
 
-<style lang="less">
-</style>

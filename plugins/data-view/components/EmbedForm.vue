@@ -9,83 +9,83 @@
 
       <!-- type: input -->
       <form-field-input v-if="(field.type||'input')==='input'"
-                        :field="field"
+                        :field="field" :readonly="readonly"
                         @input="updateField(field, $event)"></form-field-input>
       <!-- type: select -->
       <form-field-select v-else-if="field.type==='select'"
-                         :field="field"
+                         :field="field" :readonly="readonly"
                          @input="updateField(field, $event)"></form-field-select>
-      <!-- type: number -->
-      <form-field-number v-else-if="field.type==='number'"
-                         :field="field"
-                         @input="updateField(field, $event)"></form-field-number>
+      <!-- TODO: type: number -->
+      <!--<form-field-number v-else-if="field.type==='number'"-->
+      <!--:field="field" :readonly="readonly"-->
+      <!--@input="updateField(field, $event)"></form-field-number>-->
       <!-- type: map -->
       <form-field-map v-else-if="field.type==='map'"
-                      :field="field"
+                      :field="field" :readonly="readonly"
                       @input="updateField(field, $event)"></form-field-map>
       <!-- type: cascade -->
       <form-field-cascade v-else-if="field.type==='cascade'"
-                          :field="field"
+                          :field="field" :readonly="readonly"
                           @input="updateField(field, $event)"></form-field-cascade>
       <!-- type: date -->
       <form-field-date v-else-if="field.type==='date'"
-                       :field="field"
+                       :field="field" :readonly="readonly"
                        @input="updateField(field, $event)"></form-field-date>
-      <!-- type: radio -->
-      <form-field-radio v-else-if="field.type==='radio'"
-                        :field="field"
-                        @input="updateField(field, $event)"></form-field-radio>
-      <!-- type: checkbox -->
-      <form-field-checkbox v-else-if="field.type==='checkbox'"
-                           :field="field"
-                           @input="updateField(field, $event)"></form-field-checkbox>
-      <!-- type: rate -->
-      <form-field-rate v-else-if="field.type==='rate'"
-                       :field="field"
-                       @input="updateField(field, $event)"></form-field-rate>
-      <!-- type: color -->
-      <form-field-color v-else-if="field.type==='color'"
-                        :field="field"
-                        @input="updateField(field, $event)"></form-field-color>
-      <!-- type: upload -->
-      <form-field-upload v-else-if="field.type==='upload'"
-                         :field="field"
-                         @input="updateField(field, $event)"></form-field-upload>
+      <!-- TODO: type: radio -->
+      <!--<form-field-radio v-else-if="field.type==='radio'"-->
+      <!--:field="field" :readonly="readonly"-->
+      <!--@input="updateField(field, $event)"></form-field-radio>-->
+      <!-- TODO: type: checkbox -->
+      <!--<form-field-checkbox v-else-if="field.type==='checkbox'"-->
+      <!--:field="field" :readonly="readonly"-->
+      <!--@input="updateField(field, $event)"></form-field-checkbox>-->
+      <!-- TODO: type: rate -->
+      <!--<form-field-rate v-else-if="field.type==='rate'"-->
+      <!--:field="field" :readonly="readonly"-->
+      <!--@input="updateField(field, $event)"></form-field-rate>-->
+      <!-- TODO: type: color -->
+      <!--<form-field-color v-else-if="field.type==='color'"-->
+      <!--:field="field" :readonly="readonly"-->
+      <!--@input="updateField(field, $event)"></form-field-color>-->
+      <!-- TODO: type: upload -->
+      <!--<form-field-upload v-else-if="field.type==='upload'"-->
+      <!--:field="field" :readonly="readonly"-->
+      <!--@input="updateField(field, $event)"></form-field-upload>-->
       <!-- type: image -->
       <form-field-image v-else-if="field.type==='image'"
-                        :field="field"
+                        :field="field" :readonly="readonly"
                         @input="updateField(field, $event)"></form-field-image>
-      <!-- type: gallery -->
-      <form-field-gallery v-else-if="field.type==='gallery'"
-                          :field="field"
-                          @input="updateField(field, $event)"></form-field-gallery>
-      <!-- type: switch -->
-      <form-field-switch v-else-if="field.type==='switch'"
-                         :field="field"
-                         @input="updateField(field, $event)"></form-field-switch>
+      <!-- TODO: type: gallery -->
+      <!--<form-field-gallery v-else-if="field.type==='gallery'"-->
+      <!--:field="field" :readonly="readonly"-->
+      <!--@input="updateField(field, $event)"></form-field-gallery>-->
+      <!-- TODO: type: switch -->
+      <!--<form-field-switch v-else-if="field.type==='switch'"-->
+      <!--:field="field" :readonly="readonly"-->
+      <!--@input="updateField(field, $event)"></form-field-switch>-->
       <!-- type: district -->
       <form-field-district v-else-if="field.type==='district'"
-                           :field="field"
+                           :field="field" :readonly="readonly"
                            @input="updateField(field, $event)"></form-field-district>
-      <!-- type: editor -->
-      <form-field-editor v-else-if="field.type==='editor'"
-                         :field="field"
-                         @input="updateField(field, $event)"></form-field-editor>
-      <!-- type: object -->
-      <form-field-object v-else-if="field.type==='object'"
-                         :field="field"
-                         @input="updateField(field, $event)"></form-field-object>
-      <!-- type: multi-object -->
-      <form-field-multi-object v-else-if="field.type==='multi-object'"
-                               :field="field"
-                               @input="updateField(field, $event)"></form-field-multi-object>
-      <!-- type: list-view -->
-      <form-field-list-view v-else-if="field.type==='list-view'"
-                            :field="field"
-                            @input="updateField(field, $event)"></form-field-list-view>
+      <!-- TODO: type: editor -->
+      <!--<form-field-editor v-else-if="field.type==='editor'"-->
+      <!--:field="field" :readonly="readonly"-->
+      <!--@input="updateField(field, $event)"></form-field-editor>-->
+      <!-- TODO: type: object -->
+      <!--<form-field-object v-else-if="field.type==='object'"-->
+      <!--:field="field" :readonly="readonly"-->
+      <!--@input="updateField(field, $event)"></form-field-object>-->
+      <!-- TODO: type: multi-object -->
+      <!--<form-field-multi-object v-else-if="field.type==='multi-object'"-->
+      <!--:field="field" :readonly="readonly"-->
+      <!--@input="updateField(field, $event)"></form-field-multi-object>-->
+      <!-- TODO: type: list-view -->
+      <!--<form-field-list-view v-else-if="field.type==='list-view'"-->
+      <!--:field="field" :readonly="readonly"-->
+      <!--@input="updateField(field, $event)"></form-field-list-view>-->
       <!-- type: render -->
       <form-field-render v-else-if="field.type==='render'"
-                         :field="field"
+                         :field="field" :readonly="readonly"
                          @input="updateField(field, $event)"></form-field-render>
       <!-- type: undefined -->
       <div v-else>未实现的字段类型：{{field.type}}</div>
@@ -211,6 +211,10 @@ export default {
   mixins: [fieldSetMixins],
   props: {
     defaultItem: null,
+    readonly: {
+      type: Boolean,
+      default: false
+    },
     noInit: {
       // 默认情况下，noInit=false，EmbedForm 自动根据字段设置初始化 item 然后渲染
       // 如果设置 noInit=true，EmbedForm 将挂起渲染行为，直到外部显式调用 setItem 输入对象
@@ -389,8 +393,6 @@ export default {
 
 <style lang="less">
 @import '../../../assets/styles/defines';
-
-@px: 100vw / 750;
 
 .embed-form {
   .form-field-section-title {

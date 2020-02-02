@@ -1,13 +1,9 @@
 <script>
+import FormFieldBase from './FormFieldBase'
+
 export default {
+  extends: FormFieldBase,
   name: 'FormFieldRender',
-  props: {
-    field: {
-      type: Object,
-      default: () => {
-      }
-    }
-  },
   data () {
     return {
       component: null,
@@ -21,10 +17,6 @@ export default {
       vm.field.component = component.componentInstance
     })
     return component
-  },
-  mounted () {
-    const vm = this
-    vm.field.$el = this
   },
   methods: {
     async reload () {

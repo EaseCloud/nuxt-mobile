@@ -4,6 +4,7 @@
               :noInit="!!id"
               @update="$emit('update', $event)"
               @change="item=$event;$emit('change',$event)"
+              :readonly="!editable"
               ref="form"></embed-form>
 </template>
 
@@ -52,7 +53,8 @@ export default {
       id_: vm.id,
       item: null,
       loading: false,
-      initialized: false
+      initialized: false,
+      editable: false
     }
   },
   methods: {
@@ -65,6 +67,9 @@ export default {
       if (vm.initialized) await $form.reload()
       // 获取主体信息，如果 id_ 为 0 即为新增，不获取数据
       if (vm.id_) await vm.loadItem()
+      // 计算 editable 取值
+      vm.editable = await vm.finalize(vm.options.can_edit, vm.item) ||
+        await vm.finalize(vm.options.can_create, vm.item)
       // 首次加载进来是 false，只要跑过一次 reload 就变成 true
       vm.initialized = true
     },

@@ -5,7 +5,7 @@
       {{field.final.label}}
     </div>
     <div class="form-field-content"
-         :class="{empty: !field.displayValue, editable: !field.inline&&!field.final.disabled&&!field.final.readonly}">
+         :class="{empty: !field.displayValue, editable: !field.inline&&!isReadonly()}">
       <input class="input-inline" :placeholder="field.final.placeholder" v-if="field.inline" />
       <div v-else class="field-item field-item-input"
            @click="onClick">{{field.displayValue||field.displayValue===0&&'0'||field.final.placeholder||
@@ -15,29 +15,16 @@
 </template>
 
 <script>
+import FormFieldBase from './FormFieldBase'
+
 export default {
+  extends: FormFieldBase,
   name: 'FormFieldInput',
-  props: {
-    field: {
-      type: Object,
-      required: true
-    }
-  },
-  mounted () {
-    const vm = this
-    vm.field.$el = this
-  },
   methods: {
-    async onClick () {
+    async inputValue () {
       const vm = this
-      if (vm.field.final.disabled || vm.field.final.readonly) return
-      if (vm.field.onClick) {
-        // 如果 onClick 返回 false 或者 reject，后面的默认行为就不会触发
-        if (await vm.field.onClick(vm.field) === false) return
-      }
-      const value = await vm.prompt(`输入${vm.field.label}`,
+      return await vm.prompt(`输入${vm.field.label}`,
         vm.field.value, vm.field.final.placeholder, vm.field.rows, vm.field.htmlType)
-      vm.$emit('input', value)
     }
   }
 }

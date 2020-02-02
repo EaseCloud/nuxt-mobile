@@ -6,7 +6,7 @@
     </div>
     <div class="form-field-content"
          :class="{empty: !field.displayValue.lat||!field.displayValue.lng,
-         editable: !field.final.disabled&&!field.final.readonly}">
+         editable: !isReadonly()}">
       <div class="field-item field-item-map"
            @click="onClick">
         {{field.displayValue.label||field.final.placeholder||'请点击设置定位'}}
@@ -17,15 +17,12 @@
 </template>
 
 <script>
+import FormFieldBase from './FormFieldBase'
+
 export default {
+  extends: FormFieldBase,
   name: 'FormFieldMap',
-  props: {
-    field: {
-      // 注意 object filter 之后的值要满足地址对象的格式：{lng,lat,label,title}
-      type: Object,
-      required: true,
-    }
-  },
+  // props.field: 注意 object filter 之后的值要满足地址对象的格式：{lng,lat,label,title}
   async mounted () {
     const vm = this
     vm.field.$el = this
@@ -33,16 +30,16 @@ export default {
     if (vm.field.onWriteField === void 0) vm.field.onWriteField = () => null
   },
   methods: {
-    async onClick () {
+    async inputValue () {
       const vm = this
       const data = vm.field.displayValue
       // 要打开原地址
-      vm.$emit('input', await vm.pickLocation(
+      return vm.pickLocation(
         data && data.title,
         data && data.lng,
         data && data.lat,
         data && data.label
-      ))
+      )
     }
   }
 }

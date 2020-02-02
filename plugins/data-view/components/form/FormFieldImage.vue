@@ -18,14 +18,11 @@
 </template>
 
 <script>
+import FormFieldBase from './FormFieldBase'
+
 export default {
+  extends: FormFieldBase,
   name: 'FormFieldImage',
-  props: {
-    field: {
-      type: Object,
-      required: true
-    }
-  },
   mounted () {
     const vm = this
     vm.field.$el = this
@@ -35,8 +32,8 @@ export default {
   methods: {
     async onClick () {
       const vm = this
-      if (vm.field.final.readonly || vm.field.final.disabled) {
-         return vm.field.displayValue ? vm.previewImage(vm.field.displayValue) : null
+      if (vm.isReadonly()) {
+        return vm.field.displayValue ? vm.previewImage(vm.field.displayValue) : null
       }
       const action = vm.field.displayValue ?
         await vm.pickChoice('图片操作', { preview: '预览图片', select: '选择图片' }) : 'select'
