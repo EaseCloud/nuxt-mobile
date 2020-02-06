@@ -3,7 +3,7 @@
     <div class="filter-bar" v-if="filtering.keyword" slot="filterBar">
       <input class="filter-input" v-model="keyword"
              :placeholder="filtering.keyword.placeholder||'请输入关键词进行查找'" />
-      <a class="btn-search" @click="doQuery(filtering.keyword.query(keyword))">搜索</a>
+      <a class="btn-search" @click="doQuery(filtering.keyword.query(keyword));$emit('search', keyword)">搜索</a>
     </div>
     <div class="list-content" v-if="ready">
       <vue-better-scroll class="wrapper"
@@ -53,6 +53,7 @@ export default {
     // 页面级操作按钮
     listActions: { type: Array, default: () => [] },
     filtering: { default: () => ({ keyword: false }) },
+    defaultKeyword: { type: String, default: '' },
     options: {
       type: Object,
       default: () => ({
@@ -109,7 +110,7 @@ export default {
       // 选中的项目列表，主键 pk 的列表
       selectedIndices: [],
       // 搜索关键词
-      keyword: '',
+      keyword: vm.defaultKeyword,
       // 固化查询条件
       query: { ...vm.filters, ...vm.initQuery },
       // 固化分页条件
