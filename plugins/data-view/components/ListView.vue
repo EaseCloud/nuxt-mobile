@@ -151,7 +151,6 @@ export default {
   watch: {
     async $route (routeTo, routeFrom) {
       const vm = this
-      // console.log('>>> route', routeFrom, routeTo)
       // 本页 query 参数跳转处理，传递参数变化进 ListViewTable
       if (routeFrom.path === routeTo.path) {
         const $table = await vm.waitFor(vm.$refs, 'table')
@@ -163,7 +162,7 @@ export default {
           $table.pageTo(Number(routeTo.query.page))
         }
         // 强制变更查询条件
-        $table.doQuery(vm.filterQuery({ ...vm.$route.query }))
+        $table.doQuery(vm.filterQuery({ ...routeTo.query }))
       }
     }
   }

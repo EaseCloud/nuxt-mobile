@@ -21,8 +21,8 @@ export default {
       if (vm.field.onClick) {
         // 如果 onClick 返回 false 或者 reject，后面的默认行为就不会触发
         if (await vm.field.onClick(vm.field) === false) return
-        if (vm.isReadonly()) return
       }
+      if (vm.isReadonly()) return
       const value = await vm.inputValue()
       vm.$emit('input', value)
     },

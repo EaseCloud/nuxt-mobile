@@ -9,7 +9,7 @@
       <div class="field-item field-item-select"
            @click="onClick">
         {{field.displayValue||field.final.placeholder||
-        (field.final.disabled||field.final.readonly?'无':'请点击选择')}}
+        (isReadonly()?'无':'请点击选择')}}
       </div>
     </div>
   </div>

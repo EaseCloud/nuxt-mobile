@@ -9,7 +9,7 @@
       <input class="input-inline" :placeholder="field.final.placeholder" v-if="field.inline" />
       <div v-else class="field-item field-item-input"
            @click="onClick">{{field.displayValue||field.displayValue===0&&'0'||field.final.placeholder||
-        (field.final.disabled||field.final.readonly?'无':'点击输入')}}</div>
+        (isReadonly()?'无':'点击输入')}}</div>
     </div>
   </div>
 </template>

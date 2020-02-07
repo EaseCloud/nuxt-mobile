@@ -9,7 +9,7 @@
       <div class="field-item field-item-date"
            @click="onClick">
         {{field.displayValue||field.final.placeholder||
-        (field.final.disabled||field.final.readonly?'无':'点击选择日期')}}
+        (isReadonly()?'无':'点击选择日期')}}
       </div>
     </div>
   </div>

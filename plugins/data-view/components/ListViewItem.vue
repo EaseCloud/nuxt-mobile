@@ -3,7 +3,7 @@
                     v-if="data && rendering.item"></render-component>
   <div class="view-item" v-else-if="data" :class="{flat:options.flat}"
        :style="{'border-left-color': rendering.ribbonColor&&finalizeSync(rendering.ribbonColor, item)}">
-    <div class="item-header">
+    <div class="item-header" v-if="options.show_item_header !== false">
       <div class="item-title">
         <render-component :render="rendering.itemTitle"
                           :self="$this" :args="item"></render-component>
@@ -30,7 +30,7 @@
       <render-component v-if="rendering.itemBody" :render="rendering.itemBody"
                         :self="$this" :args="item"></render-component>
     </div>
-    <div class="item-footer">
+    <div class="item-footer" v-if="options.show_item_footer !== false">
       <div class="item-info">
         <render-component :render="rendering.itemInfo"
                           :self="$this" :args="item"></render-component>

@@ -417,9 +417,11 @@ export default {
     .clearfix();
     .form-field-label {
       float: left;
-      padding-left: 30*@px;
       width: 160*@px;
       position: relative;
+      padding: 20*@px 0 20*@px 30*@px;
+      line-height: 48*@px;
+      /*white-space: pre-wrap;*/
       .required {
         color: red;
         display: block;
