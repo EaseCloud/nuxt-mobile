@@ -361,6 +361,29 @@ export default {
               }
             }))
           })
+        },
+        async modalForm (title = '填写表单', fields = []) {
+          const vm = this
+          return new Promise(async (resolve, reject) => {
+            let form = null
+            const dialog = vm.openDialog(new DialogOptions({
+              title,
+              async onOk () {
+                vm.$store.dispatch('notifier/closeDialog', dialog)
+                const elForm = form.componentInstance
+                await elForm.validate()
+                resolve(JSON.parse(JSON.stringify(elForm.item)))
+              },
+              onCancel () {
+                vm.$store.dispatch('notifier/closeDialog', dialog)
+                reject()
+              },
+              render (h) {
+                form = h('embed-form', { props: { fields } })
+                return form
+              }
+            }))
+          })
         }
       }
     })

@@ -8,11 +8,11 @@
       <div v-if="field.sectionTitle" class="form-field-section-title">{{field.sectionTitle}} &raquo;</div>
 
       <!-- type: input -->
-      <form-field-input v-if="(field.type||'input')==='input'"
+      <form-field-input v-if="(field.type||'input')==='input'" ref="fields" :key="i"
                         :field="field" :readonly="readonly"
                         @input="updateField(field, $event)"></form-field-input>
       <!-- type: select -->
-      <form-field-select v-else-if="field.type==='select'"
+      <form-field-select v-else-if="field.type==='select'" ref="fields" :key="i"
                          :field="field" :readonly="readonly"
                          @input="updateField(field, $event)"></form-field-select>
       <!-- TODO: type: number -->
@@ -20,15 +20,15 @@
       <!--:field="field" :readonly="readonly"-->
       <!--@input="updateField(field, $event)"></form-field-number>-->
       <!-- type: map -->
-      <form-field-map v-else-if="field.type==='map'"
+      <form-field-map v-else-if="field.type==='map'" ref="fields" :key="i"
                       :field="field" :readonly="readonly"
                       @input="updateField(field, $event)"></form-field-map>
       <!-- type: cascade -->
-      <form-field-cascade v-else-if="field.type==='cascade'"
+      <form-field-cascade v-else-if="field.type==='cascade'" ref="fields" :key="i"
                           :field="field" :readonly="readonly"
                           @input="updateField(field, $event)"></form-field-cascade>
       <!-- type: date -->
-      <form-field-date v-else-if="field.type==='date'"
+      <form-field-date v-else-if="field.type==='date'" ref="fields" :key="i"
                        :field="field" :readonly="readonly"
                        @input="updateField(field, $event)"></form-field-date>
       <!-- TODO: type: radio -->
@@ -52,7 +52,7 @@
       <!--:field="field" :readonly="readonly"-->
       <!--@input="updateField(field, $event)"></form-field-upload>-->
       <!-- type: image -->
-      <form-field-image v-else-if="field.type==='image'"
+      <form-field-image v-else-if="field.type==='image'" ref="fields" :key="i"
                         :field="field" :readonly="readonly"
                         @input="updateField(field, $event)"></form-field-image>
       <!-- TODO: type: gallery -->
@@ -64,7 +64,7 @@
       <!--:field="field" :readonly="readonly"-->
       <!--@input="updateField(field, $event)"></form-field-switch>-->
       <!-- type: district -->
-      <form-field-district v-else-if="field.type==='district'"
+      <form-field-district v-else-if="field.type==='district'" ref="fields" :key="i"
                            :field="field" :readonly="readonly"
                            @input="updateField(field, $event)"></form-field-district>
       <!-- TODO: type: editor -->
@@ -84,7 +84,7 @@
       <!--:field="field" :readonly="readonly"-->
       <!--@input="updateField(field, $event)"></form-field-list-view>-->
       <!-- type: render -->
-      <form-field-render v-else-if="field.type==='render'"
+      <form-field-render v-else-if="field.type==='render'" ref="fields" :key="i"
                          :field="field" :readonly="readonly"
                          @input="updateField(field, $event)"></form-field-render>
       <!-- type: undefined -->
@@ -296,6 +296,7 @@ export default {
       }
       // Update，会直接影响到内层 EmbedForm 的绑定值
       vm.$set(field, 'displayValue', displayValue)
+      // console.log(field.key, field.label, field.value, field.displayValue)
       // 后置钩子
       if (field.postRender) {
         await field.postRender.apply(vm, [field])
@@ -381,6 +382,7 @@ export default {
       if (write) await vm.writeField(field, vm.item)
       await vm.renderField(field)
       vm.$emit('update', field)
+      if (field.$el) field.$el.$forceUpdate()
       vm.$emit('change', vm.item)
     },
     async doFieldAction (action, field) {

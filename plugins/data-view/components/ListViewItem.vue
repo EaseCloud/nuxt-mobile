@@ -29,6 +29,7 @@
       </div>
       <render-component v-if="rendering.itemBody" :render="rendering.itemBody"
                         :self="$this" :args="item"></render-component>
+      <slot></slot>
     </div>
     <div class="item-footer" v-if="options.show_item_footer !== false">
       <div class="item-info">
