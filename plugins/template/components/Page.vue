@@ -171,6 +171,10 @@ export default {
           color: @color-error;
           background: @color-error-background;
         }
+        &.disabled {
+          color: @color-error;
+          background: @color-error-background;
+        }
       }
     }
   }

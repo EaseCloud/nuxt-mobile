@@ -11,7 +11,10 @@
       </li>
     </ul>
     <div class="content" :class="{'has-tab': !!tabs}">
-      <list-view-table v-bind="listViewOptions" ref="table"></list-view-table>
+      <list-view-table v-bind="listViewOptions"
+                       :default-keyword="$route.query._keyword||''"
+                       @search="$router.replace({query:{...$route.query,_keyword:$event}})"
+                       ref="table"></list-view-table>
     </div>
   </page>
 </template>
