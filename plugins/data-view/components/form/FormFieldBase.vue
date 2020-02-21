@@ -32,6 +32,7 @@ export default {
     },
     isReadonly () {
       const vm = this
+      if (vm.field.final.readonly === false) return false
       return vm.readonly || vm.field.final.disabled || vm.field.final.readonly
     }
   }

@@ -13,8 +13,8 @@
     </edit-view-form>
     <template slot="actions">
       <a class="action-item primary"
-         v-if="options.can_edit === void 0 ||
-               finalizeSync(options.can_edit,item)"
+         v-if="(options.can_edit === void 0 ||
+               finalizeSync(options.can_edit,item)) && !options.hide_edit_button"
          @click="submit()">保存</a>
       <a class="action-item danger"
          v-if="Number($route.params.id) &&
