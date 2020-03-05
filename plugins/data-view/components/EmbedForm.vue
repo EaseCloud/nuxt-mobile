@@ -9,11 +9,11 @@
 
       <!-- type: input -->
       <form-field-input v-if="(field.type||'input')==='input'" ref="fields" :key="i"
-                        :field="field" :readonly="readonly"
+                        :field="field" :readonly="readonly" :item="item"
                         @input="updateField(field, $event)"></form-field-input>
       <!-- type: select -->
       <form-field-select v-else-if="field.type==='select'" ref="fields" :key="i"
-                         :field="field" :readonly="readonly"
+                         :field="field" :readonly="readonly" :item="item"
                          @input="updateField(field, $event)"></form-field-select>
       <!-- TODO: type: number -->
       <!--<form-field-number v-else-if="field.type==='number'"-->
@@ -21,15 +21,15 @@
       <!--@input="updateField(field, $event)"></form-field-number>-->
       <!-- type: map -->
       <form-field-map v-else-if="field.type==='map'" ref="fields" :key="i"
-                      :field="field" :readonly="readonly"
+                      :field="field" :readonly="readonly" :item="item"
                       @input="updateField(field, $event)"></form-field-map>
       <!-- type: cascade -->
       <form-field-cascade v-else-if="field.type==='cascade'" ref="fields" :key="i"
-                          :field="field" :readonly="readonly"
+                          :field="field" :readonly="readonly" :item="item"
                           @input="updateField(field, $event)"></form-field-cascade>
       <!-- type: date -->
       <form-field-date v-else-if="field.type==='date'" ref="fields" :key="i"
-                       :field="field" :readonly="readonly"
+                       :field="field" :readonly="readonly" :item="item"
                        @input="updateField(field, $event)"></form-field-date>
       <!-- TODO: type: radio -->
       <!--<form-field-radio v-else-if="field.type==='radio'"-->
@@ -53,7 +53,7 @@
       <!--@input="updateField(field, $event)"></form-field-upload>-->
       <!-- type: image -->
       <form-field-image v-else-if="field.type==='image'" ref="fields" :key="i"
-                        :field="field" :readonly="readonly"
+                        :field="field" :readonly="readonly" :item="item"
                         @input="updateField(field, $event)"></form-field-image>
       <!-- TODO: type: gallery -->
       <!--<form-field-gallery v-else-if="field.type==='gallery'"-->
@@ -65,7 +65,7 @@
       <!--@input="updateField(field, $event)"></form-field-switch>-->
       <!-- type: district -->
       <form-field-district v-else-if="field.type==='district'" ref="fields" :key="i"
-                           :field="field" :readonly="readonly"
+                           :field="field" :readonly="readonly" :item="item"
                            @input="updateField(field, $event)"></form-field-district>
       <!-- TODO: type: editor -->
       <!--<form-field-editor v-else-if="field.type==='editor'"-->
@@ -85,7 +85,7 @@
       <!--@input="updateField(field, $event)"></form-field-list-view>-->
       <!-- type: render -->
       <form-field-render v-else-if="field.type==='render'" ref="fields" :key="i"
-                         :field="field" :readonly="readonly"
+                         :field="field" :readonly="readonly" :item="item"
                          @input="updateField(field, $event)"></form-field-render>
       <!-- type: undefined -->
       <div v-else>未实现的字段类型：{{field.type}}</div>

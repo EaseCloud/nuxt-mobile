@@ -69,6 +69,9 @@ export default {
    * @returns {*}
    */
   wrapChoices (choices) {
+    if (choices instanceof Array && choices.length > 0 && typeof(choices[0]) === 'string') {
+      return choices.map(str => ({ text: str, value: str }))
+    }
     if (choices instanceof Array || !(choices instanceof Object)) return choices
     return _.map(choices, (value, key) => ({ value: key, text: value }))
   },
