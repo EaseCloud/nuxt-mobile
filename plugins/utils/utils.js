@@ -183,10 +183,17 @@ export default {
   isWechat () {
     return process.browser && /MicroMessenger/.test(navigator.userAgent)
   },
+  isPCWechat () {
+    return /WindowsWechat/.test(navigator.userAgent)
+  },
   async getWxJssdk () {
     const vm = this
     await vm.waitFor(process, 'browser')
     // 环境判断
+    if (vm.isPCWechat()) {
+      vm.notify('电脑版微信无法调起 JSSDK')
+      return Promise.reject()
+    }
     if (!vm.isWechat()) {
       vm.notify('非微信环境无法调起JSSDK')
       return Promise.reject()

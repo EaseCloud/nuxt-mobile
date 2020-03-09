@@ -53,7 +53,7 @@ export default {
         },
         async pickImage (source = 'all', multiple = false) {
           const vm = this
-          if (vm.isWechat()) {
+          if (vm.isWechat() && !vm.isPCWechat()) {
             const wx = await vm.getWxJssdk()
             return new Promise((resolve, reject) => {
               wx.chooseImage({
@@ -102,6 +102,7 @@ export default {
           return vm.previewImages([image], image)
         },
         async previewImages (images, current = '') {
+          // TODO: 要考虑 PC 的情况
           const vm = this
           const wx = await vm.getWxJssdk()
           return new Promise((resolve, reject) => {
