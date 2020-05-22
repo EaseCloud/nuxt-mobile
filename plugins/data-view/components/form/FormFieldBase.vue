@@ -17,7 +17,7 @@ export default {
   },
   mounted () {
     const vm = this
-    vm.field.$el = this
+    vm.$set(vm.field, '$el', vm)
   },
   methods: {
     async onClick () {

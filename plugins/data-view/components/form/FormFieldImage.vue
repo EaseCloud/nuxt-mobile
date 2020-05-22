@@ -1,14 +1,15 @@
 <template>
-  <div class="form-field form-field-image">
+  <div class="form-field form-field-image"
+       v-show="field.final && (field.final.visible === void 0 || field.final.visible)">
     <div class="form-field-label">
       <span class="required" v-if="field.final.required">*</span>
       {{field.final.label}}
     </div>
     <div class="form-field-content">
-      <div class="field-item field-item-image">
+      <div class="field-item field-item-image" :class="{empty:!field.displayValue}" @click="onClick">
         <img :src="field.displayValue ||
         (field.final.readonly||field.final.disabled?config.image_placeholder_url
-        :require('@/nuxt-mobile/assets/images/icon-camera.png'))" @click.stop="onClick" />
+        :require('@/nuxt-mobile/assets/images/icon-camera.png'))" />
         <a class="btn-reset"
            v-if="!field.final.disabled&&!field.final.readonly&&field.value"
            @click.stop="reset">&times;</a>

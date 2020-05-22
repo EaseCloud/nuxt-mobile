@@ -131,5 +131,16 @@ export default {
       }
     }
   }
+  .dialog.free {
+    .dialog-header {
+      display: none;
+    }
+    .dialog-actions {
+      display: none;
+    }
+    .dialog-body {
+      .fill-fixed();
+    }
+  }
 }
 </style>

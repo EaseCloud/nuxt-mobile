@@ -1,5 +1,6 @@
 <template>
-  <div class="form-field">
+  <div class="form-field"
+       v-show="field.final && (field.final.visible === void 0 || field.final.visible)">
     <div class="form-field-label">
       <span class="required" v-if="field.final.required">*</span>
       {{field.final.label}}
@@ -25,7 +26,6 @@ export default {
   // props.field: 注意 object filter 之后的值要满足地址对象的格式：{lng,lat,label,title}
   async mounted () {
     const vm = this
-    vm.field.$el = this
     // 默认不进行回写
     if (vm.field.onWriteField === void 0) vm.field.onWriteField = () => null
   },

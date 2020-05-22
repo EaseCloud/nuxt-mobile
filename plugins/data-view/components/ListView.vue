@@ -9,12 +9,17 @@
           class="tab-item" :class="{active:($route.query.__tab__||'')===(tab.key||'')}">
         <a @click="tabTo(tab)">{{tab.label}}</a>
       </li>
+      <slot name="tab-list-after"></slot>
     </ul>
     <div class="content" :class="{'has-tab': !!tabs}">
       <list-view-table v-bind="listViewOptions"
                        :default-keyword="$route.query._keyword||''"
                        @search="$router.replace({query:{...$route.query,_keyword:$event}})"
-                       ref="table"></list-view-table>
+                       ref="table">
+          <template v-slot:list-before>
+            <slot name="list-before"></slot>
+          </template>
+      </list-view-table>
     </div>
   </page>
 </template>

@@ -1,5 +1,6 @@
 <template>
-  <div class="form-field">
+  <div class="form-field"
+       v-show="field.final && (field.final.visible === void 0 || field.final.visible)">
     <div class="form-field-label">
       <span class="required" v-if="field.final.required">*</span>
       {{field.final.label}}

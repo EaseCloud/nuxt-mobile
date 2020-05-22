@@ -4,16 +4,22 @@
       v-for="(field, i) in fields"
       v-if="field.final && (field.final.display === void 0 || field.final.display)">
 
-      <div v-if="field.hasGap" class="form-field-gap"></div>
-      <div v-if="field.sectionTitle" class="form-field-section-title">{{field.sectionTitle}} &raquo;</div>
+      <div v-if="field.hasGap" class="form-field-gap"
+           v-show="field.final && (field.final.visible === void 0 || field.final.visible)"></div>
+      <div v-if="field.sectionTitle"
+           v-show="field.final && (field.final.visible === void 0 || field.final.visible)"
+           class="form-field-section-title">{{field.sectionTitle}} &raquo;
+      </div>
 
       <!-- type: input -->
       <form-field-input v-if="(field.type||'input')==='input'" ref="fields" :key="i"
                         :field="field" :readonly="readonly" :item="item"
+                        :class="{['field-'+(field.key||field.id||'unnamed')]:true}"
                         @input="updateField(field, $event)"></form-field-input>
       <!-- type: select -->
       <form-field-select v-else-if="field.type==='select'" ref="fields" :key="i"
                          :field="field" :readonly="readonly" :item="item"
+                         :class="{['field-'+(field.key||field.id||'unnamed')]:true}"
                          @input="updateField(field, $event)"></form-field-select>
       <!-- TODO: type: number -->
       <!--<form-field-number v-else-if="field.type==='number'"-->
@@ -22,14 +28,17 @@
       <!-- type: map -->
       <form-field-map v-else-if="field.type==='map'" ref="fields" :key="i"
                       :field="field" :readonly="readonly" :item="item"
+                      :class="{['field-'+(field.key||field.id||'unnamed')]:true}"
                       @input="updateField(field, $event)"></form-field-map>
       <!-- type: cascade -->
       <form-field-cascade v-else-if="field.type==='cascade'" ref="fields" :key="i"
                           :field="field" :readonly="readonly" :item="item"
+                          :class="{['field-'+(field.key||field.id||'unnamed')]:true}"
                           @input="updateField(field, $event)"></form-field-cascade>
       <!-- type: date -->
       <form-field-date v-else-if="field.type==='date'" ref="fields" :key="i"
                        :field="field" :readonly="readonly" :item="item"
+                       :class="{['field-'+(field.key||field.id||'unnamed')]:true}"
                        @input="updateField(field, $event)"></form-field-date>
       <!-- TODO: type: radio -->
       <!--<form-field-radio v-else-if="field.type==='radio'"-->
@@ -54,6 +63,7 @@
       <!-- type: image -->
       <form-field-image v-else-if="field.type==='image'" ref="fields" :key="i"
                         :field="field" :readonly="readonly" :item="item"
+                        :class="{['field-'+(field.key||field.id||'unnamed')]:true}"
                         @input="updateField(field, $event)"></form-field-image>
       <!-- TODO: type: gallery -->
       <!--<form-field-gallery v-else-if="field.type==='gallery'"-->
@@ -66,6 +76,7 @@
       <!-- type: district -->
       <form-field-district v-else-if="field.type==='district'" ref="fields" :key="i"
                            :field="field" :readonly="readonly" :item="item"
+                           :class="{['field-'+(field.key||field.id||'unnamed')]:true}"
                            @input="updateField(field, $event)"></form-field-district>
       <!-- TODO: type: editor -->
       <!--<form-field-editor v-else-if="field.type==='editor'"-->
@@ -86,6 +97,7 @@
       <!-- type: render -->
       <form-field-render v-else-if="field.type==='render'" ref="fields" :key="i"
                          :field="field" :readonly="readonly" :item="item"
+                         :class="{['field-'+(field.key||field.id||'unnamed')]:true}"
                          @input="updateField(field, $event)"></form-field-render>
       <!-- type: undefined -->
       <div v-else>未实现的字段类型：{{field.type}}</div>
@@ -362,7 +374,7 @@ export default {
     },
     getField (key) {
       const vm = this
-      return vm._.find(vm.fields, { key })
+      return vm._.find(vm.fields, { id: key }) || vm._.find(vm.fields, { key })
     },
     // setField (key, value) {
     //   const vm = this

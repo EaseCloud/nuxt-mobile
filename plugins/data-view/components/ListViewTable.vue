@@ -1,10 +1,11 @@
 <template>
-  <div class="list-view-table" :class="options.css_class">
+  <div class="list-view-table" :class="{'has-filter': !!filtering.keyword,...options.css_class}">
     <div class="filter-bar" v-if="filtering.keyword" slot="filterBar">
       <input class="filter-input" v-model="keyword"
              :placeholder="filtering.keyword.placeholder||'请输入关键词进行查找'" />
       <a class="btn-search" @click="doQuery(filtering.keyword.query(keyword));$emit('search', keyword)">搜索</a>
     </div>
+    <slot name="list-before"></slot>
     <div class="list-content" v-if="ready">
       <vue-better-scroll class="wrapper"
                          ref="scroll"

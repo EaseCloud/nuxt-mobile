@@ -1,6 +1,7 @@
 <template>
   <div class="field-item field-item-cascade"
-       :style="{width: field.final.width || '250px'}">
+       :style="{width: field.final.width || '250px'}"
+       v-show="field.final && (field.final.visible === void 0 || field.final.visible)">
     <cascader :data="field.final.choices"
               class="form-field-cascade"
               :clearable="!!field.clearable"

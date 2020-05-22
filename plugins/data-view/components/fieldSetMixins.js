@@ -10,7 +10,7 @@ export default {
       const attrs = [
         'label', 'placeholder', 'htmlType', 'width', 'labelWidth', 'type',
         'required', 'display', 'disabled', 'readonly', 'choices', 'filtering',
-        'editable', 'size', 'default'
+        'editable', 'size', 'default', 'visible'
       ]
       await Promise.all(attrs.map(async attr => {
         if (field[attr] !== void 0) {
