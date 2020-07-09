@@ -37,7 +37,7 @@ export default ({ store, isClient }, inject) => {
   // Vue 插件式引入：Utils模块
   Vue.use(UtilsPlugin)
   // Vue 插件式引入：Api模块
-  Vue.use(ApiPlugin)
+  Vue.use(ApiPlugin, { store, isClient })
   // Vue 插件式引入，传入 store 用于内部动态 registerModule 到 Vuex store
   Vue.use(NotifierPlugin, { store, isClient })
   // Vue 插件式引入：DataView

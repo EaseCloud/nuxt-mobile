@@ -89,9 +89,11 @@ class RestResource {
     // 自动错误处理器
     this.axios.interceptors.response.use(response => {
       notifyResponseMessage(_this.vm, response)
+      _this.vm?.$store.dispatch('api/end')
       return response
     }, error => {
       notifyResponseMessage(_this.vm, error.response)
+      _this.vm?.$store.dispatch('api/end')
       return Promise.reject(error)
     })
     this.model = model
@@ -110,6 +112,7 @@ class RestResource {
     if (config.hooks && config.hooks.filter_data_before_api_request) {
       data = await config.hooks.filter_data_before_api_request.apply(this.vm, [data])
     }
+    this.vm?.$store.dispatch('api/begin')
     return await this.axios.request({
       method,
       url: urljoin(this.root, this.model, this.urlTemplate.expand(params)),

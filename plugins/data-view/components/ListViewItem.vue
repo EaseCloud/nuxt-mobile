@@ -42,16 +42,16 @@
       </div>
       <div class="item-actions">
         <!-- TODO: 动态的动作重构 -->
-        <a v-for="action in actions"
+        <a v-for="action in actions" href="javascript:"
            v-if="action.display===void 0||finalizeSync(action.display,item)"
            class="btn-action" :class="{[action.buttonClass||'default']:true}"
            @click="action.action.apply($this, [item, index])">
           {{action.label}}
         </a>
-        <a class="btn-action default btn-detail"
+        <a class="btn-action default btn-detail" href="javascript:"
            v-if="options.can_edit===void 0||finalizeSync(options.can_edit,item)"
            @click="editItem(item)">查看</a>
-        <a class="btn-action error btn-delete"
+        <a class="btn-action error btn-delete" href="javascript:"
            v-if="options.can_delete===void 0||finalizeSync(options.can_delete,item)"
            @click="deleteItem(item)">删除</a>
       </div>

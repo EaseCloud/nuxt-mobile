@@ -35,6 +35,8 @@
     </slot>
     <!-- 提示、弹窗等功能注册入口 -->
     <notifier-registry></notifier-registry>
+    <!-- loading 遮罩层 -->
+    <loading-registry></loading-registry>
   </div>
 </template>
 
